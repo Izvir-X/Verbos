@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConjugaES — Apprendre l'espagnol</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f0e8; --surface:#faf7f2; --card:#fff; --border:#d8cfc0;
+  --green:#4a7c59; --green-light:#6a9e78; --green-pale:#e8f0ea;
+  --brown:#8b6f47; --brown-light:#c4a882; --red:#c0553a;
+  --text:#2d2a24; --muted:#9a8e7e; --gold:#b8923a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%234a7c59' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.container{max-width:1100px;margin:0 auto;padding:0 20px;}
+header{padding:40px 0 0;text-align:center;}
+.logo-wrap{display:inline-flex;align-items:center;gap:12px;margin-bottom:8px;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:600;color:var(--green);letter-spacing:-1px;}
+.logo em{color:var(--brown);font-style:italic;}
+.tagline{color:var(--muted);font-size:.8rem;letter-spacing:4px;text-transform:uppercase;}
+.header-divider{width:80px;height:2px;background:linear-gradient(90deg,var(--green),var(--brown-light));margin:16px auto 0;border-radius:2px;}
+.tabs{display:flex;justify-content:center;gap:6px;margin:32px 0 24px;flex-wrap:wrap;}
+.tab{padding:10px 24px;border:1.5px solid var(--border);border-radius:40px;background:transparent;color:var(--muted);font-family:'Jost',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+.tab:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.tab.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:500;}
+.score-bar{display:flex;gap:16px;margin-bottom:28px;padding:16px 22px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 12px rgba(74,124,89,.08);}
+.score-item{display:flex;align-items:center;gap:8px;font-size:.85rem;}
+.score-dot{width:10px;height:10px;border-radius:50%;}
+.score-dot.correct{background:var(--green);}
+.score-dot.wrong{background:var(--red);}
+.score-dot.total{background:var(--brown);}
+.score-num{font-weight:500;font-size:1rem;color:var(--text);}
+.score-label{color:var(--muted);}
+.progress-bar{flex:1;height:7px;background:var(--border);border-radius:10px;overflow:hidden;min-width:80px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:10px;transition:width .4s ease;}
+#mode-quiz{display:none;}
+#mode-quiz.active{display:block;}
+.tense-selector{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;}
+.tense-btn{padding:8px 18px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--muted);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.tense-btn:hover{border-color:var(--green);color:var(--green);}
+.tense-btn.active{background:var(--green-pale);border-color:var(--green);color:var(--green);font-weight:500;}
+.quiz-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:44px 40px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(74,124,89,.1);}
+.quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),var(--brown-light),var(--gold));}
+.quiz-card::after{content:'🌿';position:absolute;top:16px;right:20px;font-size:1.4rem;opacity:.25;}
+.verb-display{font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--green);margin-bottom:6px;letter-spacing:-1px;line-height:1;}
+.verb-translation{color:var(--brown);font-size:1rem;margin-bottom:4px;font-style:italic;}
+.verb-type{display:inline-block;padding:4px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:.72rem;color:var(--muted);margin-bottom:28px;letter-spacing:1.5px;text-transform:uppercase;background:var(--bg);}
+.question-prompt{font-size:1.05rem;color:var(--text);margin-bottom:6px;}
+.pronoun-highlight{color:var(--green);font-weight:600;}
+.answer-input{width:100%;max-width:320px;padding:14px 20px;background:var(--bg);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Jost',sans-serif;font-size:1.1rem;text-align:center;outline:none;transition:border-color .2s;margin:16px 0;}
+.answer-input:focus{border-color:var(--green);background:#fff;}
+.answer-input.correct{border-color:var(--green);background:var(--green-pale);}
+.answer-input.wrong{border-color:var(--red);background:#fdf0ed;}
+.feedback-msg{min-height:28px;font-size:.95rem;font-weight:500;margin-bottom:8px;}
+.feedback-msg.correct{color:var(--green);}
+.feedback-msg.wrong{color:var(--red);}
+.btn{padding:12px 28px;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+.btn-primary{background:var(--green);color:#fff;}
+.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:0 4px 12px rgba(74,124,89,.3);}
+.btn-secondary{background:var(--card);border:1.5px solid var(--border);color:var(--muted);}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);}
+.quiz-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+#mode-table{display:none;}
+#mode-table.active{display:block;}
+.controls{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+.search-box{flex:1;min-width:200px;position:relative;}
+.search-box input{width:100%;padding:12px 16px 12px 44px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Jost',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;}
+.search-box input:focus{border-color:var(--green);}
+.search-box input::placeholder{color:var(--muted);}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);}
+select{padding:12px 16px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Jost',sans-serif;font-size:.9rem;outline:none;cursor:pointer;}
+.verb-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;margin-bottom:24px;max-height:280px;overflow-y:auto;padding-right:4px;}
+.verb-list::-webkit-scrollbar{width:4px;}
+.verb-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.verb-item{padding:12px 16px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;}
+.verb-item:hover,.verb-item.selected{border-color:var(--green);background:var(--green-pale);}
+.vi-name{font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--green);font-size:1.1rem;}
+.vi-trans{color:var(--muted);font-size:.78rem;margin-top:2px;}
+.conj-table-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(74,124,89,.08);}
+.conj-table-header{padding:24px 28px;border-bottom:1.5px solid var(--border);background:linear-gradient(135deg,var(--green-pale),#fff);display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.conj-table-header h2{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--green);font-weight:600;}
+.ctrans{display:block;color:var(--brown);font-size:1.05rem;font-style:italic;margin-top:2px;}
+.tenses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}
+.tense-block{padding:22px 26px;border-right:1.5px solid var(--border);border-bottom:1.5px solid var(--border);}
+.tense-title{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--green);margin-bottom:14px;font-weight:500;display:flex;align-items:center;gap:8px;}
+.tense-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.conj-row{display:grid;grid-template-columns:75px 1fr 1fr;align-items:center;padding:8px 0;border-bottom:1px solid rgba(216,207,192,.4);gap:6px;}
+.conj-row:last-child{border-bottom:none;}
+.conj-pronoun{color:var(--muted);font-size:.8rem;}
+.conj-form{font-size:.95rem;color:var(--text);font-weight:500;}
+.conj-fr{font-size:.82rem;color:var(--brown-light);font-style:italic;}
+#mode-flash{display:none;}
+#mode-flash.active{display:block;}
+.flashcard-area{perspective:1000px;margin-bottom:24px;}
+.flashcard{width:100%;max-width:480px;margin:0 auto;height:280px;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);cursor:pointer;}
+.flashcard.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;border:1.5px solid var(--border);box-shadow:0 4px 24px rgba(74,124,89,.1);}
+.fc-front{background:linear-gradient(135deg,var(--card),var(--green-pale));}
+.fc-back{background:linear-gradient(135deg,var(--green-pale),var(--card));transform:rotateY(180deg);border-color:var(--green);}
+.fc-label{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.fc-verb{font-family:'Cormorant Garamond',serif;font-size:3.2rem;color:var(--green);margin-bottom:4px;font-weight:600;}
+
+.fc-sub{color:var(--muted);font-size:.9rem;}
+.fc-fr{color:var(--brown);font-size:.85rem;font-style:italic;margin-top:6px;}
+.fc-tense-badge{position:absolute;top:16px;right:16px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--bg);padding:4px 12px;border-radius:20px;border:1px solid var(--border);}
+.flash-nav{display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;}
+.flash-counter{color:var(--muted);font-size:.85rem;min-width:80px;text-align:center;}
+.fc-hint{text-align:center;color:var(--muted);font-size:.8rem;margin:12px 0 20px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;font-weight:500;margin-top:4px;}
+.badge-ar{background:rgba(74,124,89,.12);color:var(--green);}
+.badge-er{background:rgba(184,146,58,.12);color:var(--gold);}
+.badge-ir{background:rgba(192,85,58,.12);color:var(--red);}
+.badge-irr{background:rgba(139,111,71,.12);color:var(--brown);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
+footer{text-align:center;padding:32px 0;color:var(--muted);font-size:.8rem;border-top:1.5px solid var(--border);margin-top:40px;}
+footer span{color:var(--green);font-weight:500;}
+@media(max-width:600px){
+  .verb-display,.fc-verb{font-size:2.4rem;}
+  .quiz-card{padding:28px 16px;}
+  .tenses-grid{grid-template-columns:1fr;}
+  
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="logo-wrap">
+    <span>🌿</span>
+    <div class="logo">Conjuga<em>ES</em></div>
+    <span>🌿</span>
+  </div>
+  <div class="tagline">Apprendre la conjugaison espagnole</div>
+  <div class="header-divider"></div>
+</header>
+<div class="tabs" style="margin-top:32px;">
+  <button class="tab active" onclick="switchTab('quiz')">🎯 Quiz</button>
+  <button class="tab" onclick="switchTab('table')">📋 Tables</button>
+  <button class="tab" onclick="switchTab('flash')">🃏 Flashcards</button>
+</div>
+<div class="score-bar">
+  <div class="score-item"><div class="score-dot correct"></div><span class="score-num" id="scoreCorrect">0</span><span class="score-label">&nbsp;corrects</span></div>
+  <div class="score-item"><div class="score-dot wrong"></div><span class="score-num" id="scoreWrong">0</span><span class="score-label">&nbsp;erreurs</span></div>
+  <div class="score-item"><div class="score-dot total"></div><span class="score-num" id="scoreTotal">0</span><span class="score-label">&nbsp;total</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <button class="btn btn-secondary" style="padding:8px 16px;font-size:.8rem;" onclick="resetScore()">Réinitialiser</button>
+</div>
+<div id="mode-quiz" class="active">
+  <div class="tense-selector" id="tenseSelector"></div>
+  <div class="quiz-card">
+    <div class="verb-display" id="qVerb">—</div>
+    <div class="verb-translation" id="qTrans"></div>
+    <div class="verb-type" id="qType"></div>
+    <div class="question-prompt">Conjuguez au <strong id="qTenseName"></strong> pour <span class="pronoun-highlight" id="qPronoun"></span></div><br>
+    <input type="text" class="answer-input" id="answerInput" placeholder="Votre réponse..." onkeydown="if(event.key==='Enter')checkAnswer()">
+    <div class="feedback-msg" id="feedbackMsg"></div>
+    <div class="quiz-actions">
+      <button class="btn btn-primary" onclick="checkAnswer()">Vérifier</button>
+      <button class="btn btn-secondary" onclick="nextQuestion()">Suivant →</button>
+      <button class="btn btn-secondary" onclick="showHint()">💡 Indice</button>
+    </div>
+  </div>
+</div>
+<div id="mode-table">
+  <div class="controls">
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Rechercher un verbe..." id="tableSearch" oninput="filterTableVerbs()"></div>
+    <select id="tableTypeFilter" onchange="filterTableVerbs()"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
+  </div>
+  <div class="verb-list" id="verbList"></div>
+  <div class="conj-table-wrap">
+    <div class="conj-table-header"><div><h2 id="tableVerbName">Choisissez un verbe</h2><span class="ctrans" id="tableVerbTrans"></span></div></div>
+    <div class="tenses-grid" id="tenseGrid"><div class="empty-state">🌿 Sélectionnez un verbe ci-dessus</div></div>
+  </div>
+</div>
+<div id="mode-flash">
+  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;">
+    <select id="flashTenseFilter" onchange="initFlash()"><option value="presente">Présent</option><option value="preterito">Prétérit</option><option value="imperfecto">Imparfait</option><option value="futuro">Futur</option><option value="condicional">Conditionnel</option><option value="subjuntivo">Subjonctif</option></select>
+    <select id="flashTypeFilter" onchange="initFlash()"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
+  </div>
+  <div class="flashcard-area">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="fc-face fc-front"><div class="fc-label">Infinitif + Pronom</div><div class="fc-verb" id="fcVerb">—</div><div class="fc-sub" id="fcPronoun">—</div><div class="fc-tense-badge" id="fcTenseBadge">—</div></div>
+      <div class="fc-face fc-back"><div class="fc-label">Conjugaison</div><div class="fc-verb" id="fcAnswer">—</div><div class="fc-fr" id="fcFr">—</div></div>
+    </div>
+  </div>
+  <div class="fc-hint">🌿 Cliquez sur la carte pour révéler la réponse</div>
+  <div class="flash-nav">
+    <button class="btn btn-secondary" onclick="flashNav(-1)">← Précédent</button>
+    <div class="flash-counter" id="flashCounter">— / —</div>
+    <button class="btn btn-primary" onclick="flashNav(1)">Suivant →</button>
+  </div>
+  <br><div style="text-align:center;"><button class="btn btn-secondary" onclick="shuffleFlash()">🔀 Mélanger</button></div>
+</div>
+<footer><span>ConjugaES</span> — 80+ verbes · 6 temps · Traductions &amp; phonétique 🌿</footer>
+</div>
+<script>
+const PRONOUNS=['yo','tú','él/ella','nosotros','vosotros','ellos/ellas'];
+const TENSES={presente:{n:'Présent',fr:'Présent'},preterito:{n:'Prétérit',fr:'Prétérit'},imperfecto:{n:'Imparfait',fr:'Imparfait'},futuro:{n:'Futur',fr:'Futur'},condicional:{n:'Conditionnel',fr:'Conditionnel'},subjuntivo:{n:'Subjonctif',fr:'Subjonctif'}};
+// Each verb: v=infinitif, t=traduction, type, es=conjugaisons, ph=phonétique, fr=traductions conjuguées
+// All 6 tenses: presente, preterito, imperfecto, futuro, condicional, subjuntivo
+// Each tense: [yo, tú, él/ella, nosotros, vosotros, ellos/ellas]
+const VERBS=[
+{v:'hablar',t:'Parler',type:'ar',
+ es:{presente:['hablo','hablas','habla','hablamos','habláis','hablan'],preterito:['hablé','hablaste','habló','hablamos','hablasteis','hablaron'],imperfecto:['hablaba','hablabas','hablaba','hablábamos','hablabais','hablaban'],futuro:['hablaré','hablarás','hablará','hablaremos','hablaréis','hablarán'],condicional:['hablaría','hablarías','hablaría','hablaríamos','hablaríais','hablarían'],subjuntivo:['hable','hables','hable','hablemos','habléis','hablen']},
+
+ fr:{presente:['je parle','tu parles','il/elle parle','nous parlons','vous parlez','ils parlent'],preterito:['je parlai','tu parlas','il parla','nous parlâmes','vous parlâtes','ils parlèrent'],imperfecto:['je parlais','tu parlais','il parlait','nous parlions','vous parliez','ils parlaient'],futuro:['je parlerai','tu parleras','il parlera','nous parlerons','vous parlerez','ils parleront'],condicional:['je parlerais','tu parlerais','il parlerait','nous parlerions','vous parleriez','ils parleraient'],subjuntivo:['que je parle','que tu parles','qu\'il parle','que nous parlions','que vous parliez','qu\'ils parlent']}},
+{v:'caminar',t:'Marcher',type:'ar',
+ es:{presente:['camino','caminas','camina','caminamos','camináis','caminan'],preterito:['caminé','caminaste','caminó','caminamos','caminasteis','caminaron'],imperfecto:['caminaba','caminabas','caminaba','caminábamos','caminabais','caminaban'],futuro:['caminaré','caminarás','caminará','caminaremos','caminaréis','caminarán'],condicional:['caminaría','caminarías','caminaría','caminaríamos','caminaríais','caminarían'],subjuntivo:['camine','camines','camine','caminemos','caminéis','caminen']},
+
+ fr:{presente:['je marche','tu marches','il marche','nous marchons','vous marchez','ils marchent'],preterito:['je marchai','tu marchas','il marcha','nous marchâmes','vous marchâtes','ils marchèrent'],imperfecto:['je marchais','tu marchais','il marchait','nous marchions','vous marchiez','ils marchaient'],futuro:['je marcherai','tu marcheras','il marchera','nous marcherons','vous marcherez','ils marcheront'],condicional:['je marcherais','tu marcherais','il marcherait','nous marcherions','vous marcheriez','ils marcheraient'],subjuntivo:['que je marche','que tu marches','qu\'il marche','que nous marchions','que vous marchiez','qu\'ils marchent']}},
+{v:'trabajar',t:'Travailler',type:'ar',
+ es:{presente:['trabajo','trabajas','trabaja','trabajamos','trabajáis','trabajan'],preterito:['trabajé','trabajaste','trabajó','trabajamos','trabajasteis','trabajaron'],imperfecto:['trabajaba','trabajabas','trabajaba','trabajábamos','trabajabais','trabajaban'],futuro:['trabajaré','trabajarás','trabajará','trabajaremos','trabajaréis','trabajarán'],condicional:['trabajaría','trabajarías','trabajaría','trabajaríamos','trabajaríais','trabajarían'],subjuntivo:['trabaje','trabajes','trabaje','trabajemos','trabajéis','trabajen']},
+
+ fr:{presente:['je travaille','tu travailles','il travaille','nous travaillons','vous travaillez','ils travaillent'],preterito:['je travaillai','tu travaillas','il travailla','nous travaillâmes','vous travaillâtes','ils travaillèrent'],imperfecto:['je travaillais','tu travaillais','il travaillait','nous travaillions','vous travailliez','ils travaillaient'],futuro:['je travaillerai','tu travailleras','il travaillera','nous travaillerons','vous travaillerez','ils travailleront'],condicional:['je travaillerais','tu travaillerais','il travaillerait','nous travaillerions','vous travailleriez','ils travailleraient'],subjuntivo:['que je travaille','que tu travailles','qu\'il travaille','que nous travaillions','que vous travailliez','qu\'ils travaillent']}},
+{v:'escuchar',t:'Écouter',type:'ar',
+ es:{presente:['escucho','escuchas','escucha','escuchamos','escucháis','escuchan'],preterito:['escuché','escuchaste','escuchó','escuchamos','escuchasteis','escucharon'],imperfecto:['escuchaba','escuchabas','escuchaba','escuchábamos','escuchabais','escuchaban'],futuro:['escucharé','escucharás','escuchará','escucharemos','escucharéis','escucharán'],condicional:['escucharía','escucharías','escucharía','escucharíamos','escucharíais','escucharían'],subjuntivo:['escuche','escuches','escuche','escuchemos','escuchéis','escuchen']},
+
+ fr:{presente:['j\'écoute','tu écoutes','il écoute','nous écoutons','vous écoutez','ils écoutent'],preterito:['j\'écoutai','tu écoutas','il écouta','nous écoutâmes','vous écoutâtes','ils écoutèrent'],imperfecto:['j\'écoutais','tu écoutais','il écoutait','nous écoutions','vous écoutiez','ils écoutaient'],futuro:['j\'écouterai','tu écouteras','il écoutera','nous écouterons','vous écouterez','ils écouteront'],condicional:['j\'écouterais','tu écouterais','il écouterait','nous écouterions','vous écouteriez','ils écouteraient'],subjuntivo:['que j\'écoute','que tu écoutes','qu\'il écoute','que nous écoutions','que vous écoutiez','qu\'ils écoutent']}},
+{v:'mirar',t:'Regarder',type:'ar',
+ es:{presente:['miro','miras','mira','miramos','miráis','miran'],preterito:['miré','miraste','miró','miramos','mirasteis','miraron'],imperfecto:['miraba','mirabas','miraba','mirábamos','mirabais','miraban'],futuro:['miraré','mirarás','mirará','miraremos','miraréis','mirarán'],condicional:['miraría','mirarías','miraría','miraríamos','miraríais','mirarían'],subjuntivo:['mire','mires','mire','miremos','miréis','miren']},
+
+ fr:{presente:['je regarde','tu regardes','il regarde','nous regardons','vous regardez','ils regardent'],preterito:['je regardai','tu regardas','il regarda','nous regardâmes','vous regardâtes','ils regardèrent'],imperfecto:['je regardais','tu regardais','il regardait','nous regardions','vous regardiez','ils regardaient'],futuro:['je regarderai','tu regarderas','il regardera','nous regarderons','vous regarderez','ils regarderont'],condicional:['je regarderais','tu regarderais','il regarderait','nous regarderions','vous regarderiez','ils regarderaient'],subjuntivo:['que je regarde','que tu regardes','qu\'il regarde','que nous regardions','que vous regardiez','qu\'ils regardent']}},
+{v:'estudiar',t:'Étudier',type:'ar',
+ es:{presente:['estudio','estudias','estudia','estudiamos','estudiáis','estudian'],preterito:['estudié','estudiaste','estudió','estudiamos','estudiasteis','estudiaron'],imperfecto:['estudiaba','estudiabas','estudiaba','estudiábamos','estudiabais','estudiaban'],futuro:['estudiaré','estudiarás','estudiará','estudiaremos','estudiaréis','estudiarán'],condicional:['estudiaría','estudiarías','estudiaría','estudiaríamos','estudiaríais','estudiarían'],subjuntivo:['estudie','estudies','estudie','estudiemos','estudiéis','estudien']},
+
+ fr:{presente:['j\'étudie','tu étudies','il étudie','nous étudions','vous étudiez','ils étudient'],preterito:['j\'étudiai','tu étudias','il étudia','nous étudiâmes','vous étudiâtes','ils étudièrent'],imperfecto:['j\'étudiais','tu étudiais','il étudiait','nous étudiions','vous étudiiez','ils étudiaient'],futuro:['j\'étudierai','tu étudieras','il étudiera','nous étudierons','vous étudierez','ils étudieront'],condicional:['j\'étudierais','tu étudierais','il étudierait','nous étudierions','vous étudieriez','ils étudieraient'],subjuntivo:['que j\'étudie','que tu étudies','qu\'il étudie','que nous étudiions','que vous étudiiez','qu\'ils étudient']}},
+{v:'comprar',t:'Acheter',type:'ar',
+ es:{presente:['compro','compras','compra','compramos','compráis','compran'],preterito:['compré','compraste','compró','compramos','comprasteis','compraron'],imperfecto:['compraba','comprabas','compraba','comprábamos','comprabais','compraban'],futuro:['compraré','comprarás','comprará','compraremos','compraréis','comprarán'],condicional:['compraría','comprarías','compraría','compraríamos','compraríais','comprarían'],subjuntivo:['compre','compres','compre','compremos','compréis','compren']},
+
+ fr:{presente:['j\'achète','tu achètes','il achète','nous achetons','vous achetez','ils achètent'],preterito:['j\'achetai','tu achetas','il acheta','nous achetâmes','vous achetâtes','ils achetèrent'],imperfecto:['j\'achetais','tu achetais','il achetait','nous achetions','vous achetiez','ils achetaient'],futuro:['j\'achèterai','tu achèteras','il achètera','nous achèterons','vous achèterez','ils achèteront'],condicional:['j\'achèterais','tu achèterais','il achèterait','nous achèterions','vous achèteriez','ils achèteraient'],subjuntivo:['que j\'achète','que tu achètes','qu\'il achète','que nous achetions','que vous achetiez','qu\'ils achètent']}},
+{v:'bailar',t:'Danser',type:'ar',
+ es:{presente:['bailo','bailas','baila','bailamos','bailáis','bailan'],preterito:['bailé','bailaste','bailó','bailamos','bailasteis','bailaron'],imperfecto:['bailaba','bailabas','bailaba','bailábamos','bailabais','bailaban'],futuro:['bailaré','bailarás','bailará','bailaremos','bailaréis','bailarán'],condicional:['bailaría','bailarías','bailaría','bailaríamos','bailaríais','bailarían'],subjuntivo:['baile','bailes','baile','bailemos','bailéis','bailen']},
+
+ fr:{presente:['je danse','tu danses','il danse','nous dansons','vous dansez','ils dansent'],preterito:['je dansai','tu dansas','il dansa','nous dansâmes','vous dansâtes','ils dansèrent'],imperfecto:['je dansais','tu dansais','il dansait','nous dansions','vous dansiez','ils dansaient'],futuro:['je danserai','tu danseras','il dansera','nous danserons','vous danserez','ils danseront'],condicional:['je danserais','tu danserais','il danserait','nous danserions','vous danseriez','ils danseraient'],subjuntivo:['que je danse','que tu danses','qu\'il danse','que nous dansions','que vous dansiez','qu\'ils dansent']}},
+{v:'llamar',t:'Appeler',type:'ar',
+ es:{presente:['llamo','llamas','llama','llamamos','llamáis','llaman'],preterito:['llamé','llamaste','llamó','llamamos','llamasteis','llamaron'],imperfecto:['llamaba','llamabas','llamaba','llamábamos','llamabais','llamaban'],futuro:['llamaré','llamarás','llamará','llamaremos','llamaréis','llamarán'],condicional:['llamaría','llamarías','llamaría','llamaríamos','llamaríais','llamarían'],subjuntivo:['llame','llames','llame','llamemos','llaméis','llamen']},
+
+ fr:{presente:['j\'appelle','tu appelles','il appelle','nous appelons','vous appelez','ils appellent'],preterito:['j\'appelai','tu appelas','il appela','nous appelâmes','vous appelâtes','ils appelèrent'],imperfecto:['j\'appelais','tu appelais','il appelait','nous appelions','vous appeliez','ils appelaient'],futuro:['j\'appellerai','tu appelleras','il appellera','nous appellerons','vous appellerez','ils appelleront'],condicional:['j\'appellerais','tu appellerais','il appellerait','nous appellerions','vous appelleriez','ils appelleraient'],subjuntivo:['que j\'appelle','que tu appelles','qu\'il appelle','que nous appelions','que vous appeliez','qu\'ils appellent']}},
+{v:'cantar',t:'Chanter',type:'ar',
+ es:{presente:['canto','cantas','canta','cantamos','cantáis','cantan'],preterito:['canté','cantaste','cantó','cantamos','cantasteis','cantaron'],imperfecto:['cantaba','cantabas','cantaba','cantábamos','cantabais','cantaban'],futuro:['cantaré','cantarás','cantará','cantaremos','cantaréis','cantarán'],condicional:['cantaría','cantarías','cantaría','cantaríamos','cantaríais','cantarían'],subjuntivo:['cante','cantes','cante','cantemos','cantéis','canten']},
+
+ fr:{presente:['je chante','tu chantes','il chante','nous chantons','vous chantez','ils chantent'],preterito:['je chantai','tu chantas','il chanta','nous chantâmes','vous chantâtes','ils chantèrent'],imperfecto:['je chantais','tu chantais','il chantait','nous chantions','vous chantiez','ils chantaient'],futuro:['je chanterai','tu chanteras','il chantera','nous chanterons','vous chanterez','ils chanteront'],condicional:['je chanterais','tu chanterais','il chanterait','nous chanterions','vous chanteriez','ils chanteraient'],subjuntivo:['que je chante','que tu chantes','qu\'il chante','que nous chantions','que vous chantiez','qu\'ils chantent']}},
+{v:'viajar',t:'Voyager',type:'ar',
+ es:{presente:['viajo','viajas','viaja','viajamos','viajáis','viajan'],preterito:['viajé','viajaste','viajó','viajamos','viajasteis','viajaron'],imperfecto:['viajaba','viajabas','viajaba','viajábamos','viajabais','viajaban'],futuro:['viajaré','viajarás','viajará','viajaremos','viajaréis','viajarán'],condicional:['viajaría','viajarías','viajaría','viajaríamos','viajaríais','viajarían'],subjuntivo:['viaje','viajes','viaje','viajemos','viajéis','viajen']},
+
+ fr:{presente:['je voyage','tu voyages','il voyage','nous voyageons','vous voyagez','ils voyagent'],preterito:['je voyageai','tu voyageas','il voyagea','nous voyageâmes','vous voyageâtes','ils voyagèrent'],imperfecto:['je voyageais','tu voyageais','il voyageait','nous voyagions','vous voyagiez','ils voyageaient'],futuro:['je voyagerai','tu voyageras','il voyagera','nous voyagerons','vous voyagerez','ils voyageront'],condicional:['je voyagerais','tu voyagerais','il voyagerait','nous voyagerions','vous voyageriez','ils voyageraient'],subjuntivo:['que je voyage','que tu voyages','qu\'il voyage','que nous voyagions','que vous voyagiez','qu\'ils voyagent']}},
+{v:'ayudar',t:'Aider',type:'ar',
+ es:{presente:['ayudo','ayudas','ayuda','ayudamos','ayudáis','ayudan'],preterito:['ayudé','ayudaste','ayudó','ayudamos','ayudasteis','ayudaron'],imperfecto:['ayudaba','ayudabas','ayudaba','ayudábamos','ayudabais','ayudaban'],futuro:['ayudaré','ayudarás','ayudará','ayudaremos','ayudaréis','ayudarán'],condicional:['ayudaría','ayudarías','ayudaría','ayudaríamos','ayudaríais','ayudarían'],subjuntivo:['ayude','ayudes','ayude','ayudemos','ayudéis','ayuden']},
+
+ fr:{presente:['j\'aide','tu aides','il aide','nous aidons','vous aidez','ils aident'],preterito:['j\'aidai','tu aidas','il aida','nous aidâmes','vous aidâtes','ils aidèrent'],imperfecto:['j\'aidais','tu aidais','il aidait','nous aidions','vous aidiez','ils aidaient'],futuro:['j\'aiderai','tu aideras','il aidera','nous aiderons','vous aiderez','ils aideront'],condicional:['j\'aiderais','tu aiderais','il aiderait','nous aiderions','vous aideriez','ils aideraient'],subjuntivo:['que j\'aide','que tu aides','qu\'il aide','que nous aidions','que vous aidiez','qu\'ils aident']}},
+{v:'amar',t:'Aimer',type:'ar',
+ es:{presente:['amo','amas','ama','amamos','amáis','aman'],preterito:['amé','amaste','amó','amamos','amasteis','amaron'],imperfecto:['amaba','amabas','amaba','amábamos','amabais','amaban'],futuro:['amaré','amarás','amará','amaremos','amaréis','amarán'],condicional:['amaría','amarías','amaría','amaríamos','amaríais','amarían'],subjuntivo:['ame','ames','ame','amemos','améis','amen']},
+
+ fr:{presente:['j\'aime','tu aimes','il aime','nous aimons','vous aimez','ils aiment'],preterito:['j\'aimai','tu aimas','il aima','nous aimâmes','vous aimâtes','ils aimèrent'],imperfecto:['j\'aimais','tu aimais','il aimait','nous aimions','vous aimiez','ils aimaient'],futuro:['j\'aimerai','tu aimeras','il aimera','nous aimerons','vous aimerez','ils aimeront'],condicional:['j\'aimerais','tu aimerais','il aimerait','nous aimerions','vous aimeriez','ils aimeraient'],subjuntivo:['que j\'aime','que tu aimes','qu\'il aime','que nous aimions','que vous aimiez','qu\'ils aiment']}},
+{v:'necesitar',t:'Avoir besoin',type:'ar',
+ es:{presente:['necesito','necesitas','necesita','necesitamos','necesitáis','necesitan'],preterito:['necesité','necesitaste','necesitó','necesitamos','necesitasteis','necesitaron'],imperfecto:['necesitaba','necesitabas','necesitaba','necesitábamos','necesitabais','necesitaban'],futuro:['necesitaré','necesitarás','necesitará','necesitaremos','necesitaréis','necesitarán'],condicional:['necesitaría','necesitarías','necesitaría','necesitaríamos','necesitaríais','necesitarían'],subjuntivo:['necesite','necesites','necesite','necesitemos','necesitéis','necesiten']},
+
+ fr:{presente:['j\'ai besoin','tu as besoin','il a besoin','nous avons besoin','vous avez besoin','ils ont besoin'],preterito:['j\'eus besoin','tu eus besoin','il eut besoin','nous eûmes besoin','vous eûtes besoin','ils eurent besoin'],imperfecto:['j\'avais besoin','tu avais besoin','il avait besoin','nous avions besoin','vous aviez besoin','ils avaient besoin'],futuro:['j\'aurai besoin','tu auras besoin','il aura besoin','nous aurons besoin','vous aurez besoin','ils auront besoin'],condicional:['j\'aurais besoin','tu aurais besoin','il aurait besoin','nous aurions besoin','vous auriez besoin','ils auraient besoin'],subjuntivo:['que j\'aie besoin','que tu aies besoin','qu\'il ait besoin','que nous ayons besoin','que vous ayez besoin','qu\'ils aient besoin']}},
+{v:'esperar',t:'Attendre / Espérer',type:'ar',
+ es:{presente:['espero','esperas','espera','esperamos','esperáis','esperan'],preterito:['esperé','esperaste','esperó','esperamos','esperasteis','esperaron'],imperfecto:['esperaba','esperabas','esperaba','esperábamos','esperabais','esperaban'],futuro:['esperaré','esperarás','esperará','esperaremos','esperaréis','esperarán'],condicional:['esperaría','esperarías','esperaría','esperaríamos','esperaríais','esperarían'],subjuntivo:['espere','esperes','espere','esperemos','esperéis','esperen']},
+
+ fr:{presente:['j\'attends','tu attends','il attend','nous attendons','vous attendez','ils attendent'],preterito:['j\'attendis','tu attendis','il attendit','nous attendîmes','vous attendîtes','ils attendirent'],imperfecto:['j\'attendais','tu attendais','il attendait','nous attendions','vous attendiez','ils attendaient'],futuro:['j\'attendrai','tu attendras','il attendra','nous attendrons','vous attendrez','ils attendront'],condicional:['j\'attendrais','tu attendrais','il attendrait','nous attendrions','vous attendriez','ils attendraient'],subjuntivo:['que j\'attende','que tu attendes','qu\'il attende','que nous attendions','que vous attendiez','qu\'ils attendent']}},
+{v:'ganar',t:'Gagner',type:'ar',
+ es:{presente:['gano','ganas','gana','ganamos','ganáis','ganan'],preterito:['gané','ganaste','ganó','ganamos','ganasteis','ganaron'],imperfecto:['ganaba','ganabas','ganaba','ganábamos','ganabais','ganaban'],futuro:['ganaré','ganarás','ganará','ganaremos','ganaréis','ganarán'],condicional:['ganaría','ganarías','ganaría','ganaríamos','ganaríais','ganarían'],subjuntivo:['gane','ganes','gane','ganemos','ganéis','ganen']},
+
+ fr:{presente:['je gagne','tu gagnes','il gagne','nous gagnons','vous gagnez','ils gagnent'],preterito:['je gagnai','tu gagnas','il gagna','nous gagnâmes','vous gagnâtes','ils gagnèrent'],imperfecto:['je gagnais','tu gagnais','il gagnait','nous gagnions','vous gagniez','ils gagnaient'],futuro:['je gagnerai','tu gagneras','il gagnera','nous gagnerons','vous gagnerez','ils gagneront'],condicional:['je gagnerais','tu gagnerais','il gagnerait','nous gagnerions','vous gagneriez','ils gagneraient'],subjuntivo:['que je gagne','que tu gagnes','qu\'il gagne','que nous gagnions','que vous gagniez','qu\'ils gagnent']}},
+{v:'jugar',t:'Jouer',type:'ar',
+ es:{presente:['juego','juegas','juega','jugamos','jugáis','juegan'],preterito:['jugué','jugaste','jugó','jugamos','jugasteis','jugaron'],imperfecto:['jugaba','jugabas','jugaba','jugábamos','jugabais','jugaban'],futuro:['jugaré','jugarás','jugará','jugaremos','jugaréis','jugarán'],condicional:['jugaría','jugarías','jugaría','jugaríamos','jugaríais','jugarían'],subjuntivo:['juegue','juegues','juegue','juguemos','juguéis','jueguen']},
+
+ fr:{presente:['je joue','tu joues','il joue','nous jouons','vous jouez','ils jouent'],preterito:['je jouai','tu jouas','il joua','nous jouâmes','vous jouâtes','ils jouèrent'],imperfecto:['je jouais','tu jouais','il jouait','nous jouions','vous jouiez','ils jouaient'],futuro:['je jouerai','tu joueras','il jouera','nous jouerons','vous jouerez','ils joueront'],condicional:['je jouerais','tu jouerais','il jouerait','nous jouerions','vous joueriez','ils joueraient'],subjuntivo:['que je joue','que tu joues','qu\'il joue','que nous jouions','que vous jouiez','qu\'ils jouent']}},
+{v:'tocar',t:'Toucher / Jouer (instrument)',type:'ar',
+ es:{presente:['toco','tocas','toca','tocamos','tocáis','tocan'],preterito:['toqué','tocaste','tocó','tocamos','tocasteis','tocaron'],imperfecto:['tocaba','tocabas','tocaba','tocábamos','tocabais','tocaban'],futuro:['tocaré','tocarás','tocará','tocaremos','tocaréis','tocarán'],condicional:['tocaría','tocarías','tocaría','tocaríamos','tocaríais','tocarían'],subjuntivo:['toque','toques','toque','toquemos','toquéis','toquen']},
+
+ fr:{presente:['je touche','tu touches','il touche','nous touchons','vous touchez','ils touchent'],preterito:['je touchai','tu touchas','il toucha','nous touchâmes','vous touchâtes','ils touchèrent'],imperfecto:['je touchais','tu touchais','il touchait','nous touchions','vous touchiez','ils touchaient'],futuro:['je toucherai','tu toucheras','il touchera','nous toucherons','vous toucherez','ils toucheront'],condicional:['je toucherais','tu toucherais','il toucherait','nous toucherions','vous toucheriez','ils toucheraient'],subjuntivo:['que je touche','que tu touches','qu\'il touche','que nous touchions','que vous touchiez','qu\'ils touchent']}},
+{v:'entrar',t:'Entrer',type:'ar',
+ es:{presente:['entro','entras','entra','entramos','entráis','entran'],preterito:['entré','entraste','entró','entramos','entrasteis','entraron'],imperfecto:['entraba','entrabas','entraba','entrábamos','entrabais','entraban'],futuro:['entraré','entrarás','entrará','entraremos','entraréis','entrarán'],condicional:['entraría','entrarías','entraría','entraríamos','entraríais','entrarían'],subjuntivo:['entre','entres','entre','entremos','entréis','entren']},
+
+ fr:{presente:['j\'entre','tu entres','il entre','nous entrons','vous entrez','ils entrent'],preterito:['j\'entrai','tu entras','il entra','nous entrâmes','vous entrâtes','ils entrèrent'],imperfecto:['j\'entrais','tu entrais','il entrait','nous entrions','vous entriez','ils entraient'],futuro:['j\'entrerai','tu entreras','il entrera','nous entrerons','vous entrerez','ils entreront'],condicional:['j\'entrerais','tu entrerais','il entrerait','nous entrerions','vous entreriez','ils entreraient'],subjuntivo:['que j\'entre','que tu entres','qu\'il entre','que nous entrions','que vous entriez','qu\'ils entrent']}},
+{v:'llevar',t:'Porter / Emmener',type:'ar',
+ es:{presente:['llevo','llevas','lleva','llevamos','lleváis','llevan'],preterito:['llevé','llevaste','llevó','llevamos','llevasteis','llevaron'],imperfecto:['llevaba','llevabas','llevaba','llevábamos','llevabais','llevaban'],futuro:['llevaré','llevarás','llevará','llevaremos','llevaréis','llevarán'],condicional:['llevaría','llevarías','llevaría','llevaríamos','llevaríais','llevarían'],subjuntivo:['lleve','lleves','lleve','llevemos','llevéis','lleven']},
+
+ fr:{presente:['je porte','tu portes','il porte','nous portons','vous portez','ils portent'],preterito:['je portai','tu portas','il porta','nous portâmes','vous portâtes','ils portèrent'],imperfecto:['je portais','tu portais','il portait','nous portions','vous portiez','ils portaient'],futuro:['je porterai','tu porteras','il portera','nous porterons','vous porterez','ils porteront'],condicional:['je porterais','tu porterais','il porterait','nous porterions','vous porteriez','ils porteraient'],subjuntivo:['que je porte','que tu portes','qu\'il porte','que nous portions','que vous portiez','qu\'ils portent']}},
+{v:'pasar',t:'Passer',type:'ar',
+ es:{presente:['paso','pasas','pasa','pasamos','pasáis','pasan'],preterito:['pasé','pasaste','pasó','pasamos','pasasteis','pasaron'],imperfecto:['pasaba','pasabas','pasaba','pasábamos','pasabais','pasaban'],futuro:['pasaré','pasarás','pasará','pasaremos','pasaréis','pasarán'],condicional:['pasaría','pasarías','pasaría','pasaríamos','pasaríais','pasarían'],subjuntivo:['pase','pases','pase','pasemos','paséis','pasen']},
+
+ fr:{presente:['je passe','tu passes','il passe','nous passons','vous passez','ils passent'],preterito:['je passai','tu passas','il passa','nous passâmes','vous passâtes','ils passèrent'],imperfecto:['je passais','tu passais','il passait','nous passions','vous passiez','ils passaient'],futuro:['je passerai','tu passeras','il passera','nous passerons','vous passerez','ils passeront'],condicional:['je passerais','tu passerais','il passerait','nous passerions','vous passeriez','ils passeraient'],subjuntivo:['que je passe','que tu passes','qu\'il passe','que nous passions','que vous passiez','qu\'ils passent']}},
+{v:'dejar',t:'Laisser',type:'ar',
+ es:{presente:['dejo','dejas','deja','dejamos','dejáis','dejan'],preterito:['dejé','dejaste','dejó','dejamos','dejasteis','dejaron'],imperfecto:['dejaba','dejabas','dejaba','dejábamos','dejabais','dejaban'],futuro:['dejaré','dejarás','dejará','dejaremos','dejaréis','dejarán'],condicional:['dejaría','dejarías','dejaría','dejaríamos','dejaríais','dejarían'],subjuntivo:['deje','dejes','deje','dejemos','dejéis','dejen']},
+
+ fr:{presente:['je laisse','tu laisses','il laisse','nous laissons','vous laissez','ils laissent'],preterito:['je laissai','tu laissas','il laissa','nous laissâmes','vous laissâtes','ils laissèrent'],imperfecto:['je laissais','tu laissais','il laissait','nous laissions','vous laissiez','ils laissaient'],futuro:['je laisserai','tu laisseras','il laissera','nous laisserons','vous laisserez','ils laisseront'],condicional:['je laisserais','tu laisserais','il laisserait','nous laisserions','vous laisseriez','ils laisseraient'],subjuntivo:['que je laisse','que tu laisses','qu\'il laisse','que nous laissions','que vous laissiez','qu\'ils laissent']}},
+{v:'usar',t:'Utiliser',type:'ar',
+ es:{presente:['uso','usas','usa','usamos','usáis','usan'],preterito:['usé','usaste','usó','usamos','usasteis','usaron'],imperfecto:['usaba','usabas','usaba','usábamos','usabais','usaban'],futuro:['usaré','usarás','usará','usaremos','usaréis','usarán'],condicional:['usaría','usarías','usaría','usaríamos','usaríais','usarían'],subjuntivo:['use','uses','use','usemos','uséis','usen']},
+
+ fr:{presente:['j\'utilise','tu utilises','il utilise','nous utilisons','vous utilisez','ils utilisent'],preterito:['j\'utilisai','tu utilisas','il utilisa','nous utilisâmes','vous utilisâtes','ils utilisèrent'],imperfecto:['j\'utilisais','tu utilisais','il utilisait','nous utilisions','vous utilisiez','ils utilisaient'],futuro:['j\'utiliserai','tu utiliseras','il utilisera','nous utiliserons','vous utiliserez','ils utiliseront'],condicional:['j\'utiliserais','tu utiliserais','il utiliserait','nous utiliserions','vous utiliseriez','ils utiliseraient'],subjuntivo:['que j\'utilise','que tu utilises','qu\'il utilise','que nous utilisions','que vous utilisiez','qu\'ils utilisent']}},
+{v:'cambiar',t:'Changer',type:'ar',
+ es:{presente:['cambio','cambias','cambia','cambiamos','cambiáis','cambian'],preterito:['cambié','cambiaste','cambió','cambiamos','cambiasteis','cambiaron'],imperfecto:['cambiaba','cambiabas','cambiaba','cambiábamos','cambiabais','cambiaban'],futuro:['cambiaré','cambiarás','cambiará','cambiaremos','cambiaréis','cambiarán'],condicional:['cambiaría','cambiarías','cambiaría','cambiaríamos','cambiaríais','cambiarían'],subjuntivo:['cambie','cambies','cambie','cambiemos','cambiéis','cambien']},
+
+ fr:{presente:['je change','tu changes','il change','nous changeons','vous changez','ils changent'],preterito:['je changeai','tu changeas','il changea','nous changeâmes','vous changeâtes','ils changèrent'],imperfecto:['je changeais','tu changeais','il changeait','nous changions','vous changiez','ils changeaient'],futuro:['je changerai','tu changeras','il changera','nous changerons','vous changerez','ils changeront'],condicional:['je changerais','tu changerais','il changerait','nous changerions','vous changeriez','ils changeraient'],subjuntivo:['que je change','que tu changes','qu\'il change','que nous changions','que vous changiez','qu\'ils changent']}},
+{v:'cocinar',t:'Cuisiner',type:'ar',
+ es:{presente:['cocino','cocinas','cocina','cocinamos','cocináis','cocinan'],preterito:['cociné','cocinaste','cocinó','cocinamos','cocinasteis','cocinaron'],imperfecto:['cocinaba','cocinabas','cocinaba','cocinábamos','cocinabais','cocinaban'],futuro:['cocinaré','cocinarás','cocinará','cocinaremos','cocinaréis','cocinarán'],condicional:['cocinaría','cocinarías','cocinaría','cocinaríamos','cocinaríais','cocinarían'],subjuntivo:['cocine','cocines','cocine','cocinemos','cocinaos','cocinen']},
+
+ fr:{presente:['je cuisine','tu cuisines','il cuisine','nous cuisinons','vous cuisinez','ils cuisinent'],preterito:['je cuisinai','tu cuisinas','il cuisina','nous cuisinâmes','vous cuisinâtes','ils cuisinèrent'],imperfecto:['je cuisinais','tu cuisinais','il cuisinait','nous cuisinions','vous cuisiniez','ils cuisinaient'],futuro:['je cuisinerai','tu cuisineras','il cuisinera','nous cuisinerons','vous cuisinerez','ils cuisineront'],condicional:['je cuisinerais','tu cuisinerais','il cuisinerait','nous cuisinerions','vous cuisineriez','ils cuisineraient'],subjuntivo:['que je cuisine','que tu cuisines','qu\'il cuisine','que nous cuisinions','que vous cuisiniez','qu\'ils cuisinent']}},
+{v:'comer',t:'Manger',type:'er',
+ es:{presente:['como','comes','come','comemos','coméis','comen'],preterito:['comí','comiste','comió','comimos','comisteis','comieron'],imperfecto:['comía','comías','comía','comíamos','comíais','comían'],futuro:['comeré','comerás','comerá','comeremos','comeréis','comerán'],condicional:['comería','comerías','comería','comeríamos','comeríais','comerían'],subjuntivo:['coma','comas','coma','comamos','comáis','coman']},
+
+ fr:{presente:['je mange','tu manges','il mange','nous mangeons','vous mangez','ils mangent'],preterito:['je mangeai','tu mangeas','il mangea','nous mangeâmes','vous mangeâtes','ils mangèrent'],imperfecto:['je mangeais','tu mangeais','il mangeait','nous mangions','vous mangiez','ils mangeaient'],futuro:['je mangerai','tu mangeras','il mangera','nous mangerons','vous mangerez','ils mangeront'],condicional:['je mangerais','tu mangerais','il mangerait','nous mangerions','vous mangeriez','ils mangeraient'],subjuntivo:['que je mange','que tu manges','qu\'il mange','que nous mangions','que vous mangiez','qu\'ils mangent']}},
+{v:'beber',t:'Boire',type:'er',
+ es:{presente:['bebo','bebes','bebe','bebemos','bebéis','beben'],preterito:['bebí','bebiste','bebió','bebimos','bebisteis','bebieron'],imperfecto:['bebía','bebías','bebía','bebíamos','bebíais','bebían'],futuro:['beberé','beberás','beberá','beberemos','beberéis','beberán'],condicional:['bebería','beberías','bebería','beberíamos','beberíais','beberían'],subjuntivo:['beba','bebas','beba','bebamos','bebáis','beban']},
+
+ fr:{presente:['je bois','tu bois','il boit','nous buvons','vous buvez','ils boivent'],preterito:['je bus','tu bus','il but','nous bûmes','vous bûtes','ils burent'],imperfecto:['je buvais','tu buvais','il buvait','nous buvions','vous buviez','ils buvaient'],futuro:['je boirai','tu boiras','il boira','nous boirons','vous boirez','ils boiront'],condicional:['je boirais','tu boirais','il boirait','nous boirions','vous boiriez','ils boiraient'],subjuntivo:['que je boive','que tu boives','qu\'il boive','que nous buvions','que vous buviez','qu\'ils boivent']}},
+{v:'correr',t:'Courir',type:'er',
+ es:{presente:['corro','corres','corre','corremos','corréis','corren'],preterito:['corrí','corriste','corrió','corrimos','corristeis','corrieron'],imperfecto:['corría','corrías','corría','corríamos','corríais','corrían'],futuro:['correré','correrás','correrá','correremos','correréis','correrán'],condicional:['correría','correrías','correría','correríamos','correríais','correrían'],subjuntivo:['corra','corras','corra','corramos','corráis','corran']},
+
+ fr:{presente:['je cours','tu cours','il court','nous courons','vous courez','ils courent'],preterito:['je courus','tu courus','il courut','nous courûmes','vous courûtes','ils coururent'],imperfecto:['je courais','tu courais','il courait','nous courions','vous couriez','ils couraient'],futuro:['je courrai','tu courras','il courra','nous courrons','vous courrez','ils courront'],condicional:['je courrais','tu courrais','il courrait','nous courrions','vous courriez','ils courraient'],subjuntivo:['que je coure','que tu coures','qu\'il coure','que nous courions','que vous couriez','qu\'ils courent']}},
+{v:'leer',t:'Lire',type:'er',
+ es:{presente:['leo','lees','lee','leemos','leéis','leen'],preterito:['leí','leíste','leyó','leímos','leísteis','leyeron'],imperfecto:['leía','leías','leía','leíamos','leíais','leían'],futuro:['leeré','leerás','leerá','leeremos','leeréis','leerán'],condicional:['leería','leerías','leería','leeríamos','leeríais','leerían'],subjuntivo:['lea','leas','lea','leamos','leáis','lean']},
+
+ fr:{presente:['je lis','tu lis','il lit','nous lisons','vous lisez','ils lisent'],preterito:['je lus','tu lus','il lut','nous lûmes','vous lûtes','ils lurent'],imperfecto:['je lisais','tu lisais','il lisait','nous lisions','vous lisiez','ils lisaient'],futuro:['je lirai','tu liras','il lira','nous lirons','vous lirez','ils liront'],condicional:['je lirais','tu lirais','il lirait','nous lirions','vous liriez','ils liraient'],subjuntivo:['que je lise','que tu lises','qu\'il lise','que nous lisions','que vous lisiez','qu\'ils lisent']}},
+{v:'vender',t:'Vendre',type:'er',
+ es:{presente:['vendo','vendes','vende','vendemos','vendéis','venden'],preterito:['vendí','vendiste','vendió','vendimos','vendisteis','vendieron'],imperfecto:['vendía','vendías','vendía','vendíamos','vendíais','vendían'],futuro:['venderé','venderás','venderá','venderemos','venderéis','venderán'],condicional:['vendería','venderías','vendería','venderíamos','venderíais','venderían'],subjuntivo:['venda','vendas','venda','vendamos','vendáis','vendan']},
+
+ fr:{presente:['je vends','tu vends','il vend','nous vendons','vous vendez','ils vendent'],preterito:['je vendis','tu vendis','il vendit','nous vendîmes','vous vendîtes','ils vendirent'],imperfecto:['je vendais','tu vendais','il vendait','nous vendions','vous vendiez','ils vendaient'],futuro:['je vendrai','tu vendras','il vendra','nous vendrons','vous vendrez','ils vendront'],condicional:['je vendrais','tu vendrais','il vendrait','nous vendrions','vous vendriez','ils vendraient'],subjuntivo:['que je vende','que tu vendes','qu\'il vende','que nous vendions','que vous vendiez','qu\'ils vendent']}},
+{v:'aprender',t:'Apprendre',type:'er',
+ es:{presente:['aprendo','aprendes','aprende','aprendemos','aprendéis','aprenden'],preterito:['aprendí','aprendiste','aprendió','aprendimos','aprendisteis','aprendieron'],imperfecto:['aprendía','aprendías','aprendía','aprendíamos','aprendíais','aprendían'],futuro:['aprenderé','aprenderás','aprenderá','aprenderemos','aprenderéis','aprenderán'],condicional:['aprendería','aprenderías','aprendería','aprenderíamos','aprenderíais','aprenderían'],subjuntivo:['aprenda','aprendas','aprenda','aprendamos','aprendáis','aprendan']},
+
+ fr:{presente:['j\'apprends','tu apprends','il apprend','nous apprenons','vous apprenez','ils apprennent'],preterito:['j\'appris','tu appris','il apprit','nous apprîmes','vous apprîtes','ils apprirent'],imperfecto:['j\'apprenais','tu apprenais','il apprenait','nous apprenions','vous appreniez','ils apprenaient'],futuro:['j\'apprendrai','tu apprendras','il apprendra','nous apprendrons','vous apprendrez','ils apprendront'],condicional:['j\'apprendrais','tu apprendrais','il apprendrait','nous apprendrions','vous apprendriez','ils apprendraient'],subjuntivo:['que j\'apprenne','que tu apprennes','qu\'il apprenne','que nous apprenions','que vous appreniez','qu\'ils apprennent']}},
+{v:'comprender',t:'Comprendre',type:'er',
+ es:{presente:['comprendo','comprendes','comprende','comprendemos','comprendéis','comprenden'],preterito:['comprendí','comprendiste','comprendió','comprendimos','comprendisteis','comprendieron'],imperfecto:['comprendía','comprendías','comprendía','comprendíamos','comprendíais','comprendían'],futuro:['comprenderé','comprenderás','comprenderá','comprenderemos','comprenderéis','comprenderán'],condicional:['comprendería','comprenderías','comprendería','comprenderíamos','comprenderíais','comprenderían'],subjuntivo:['comprenda','comprendas','comprenda','comprendamos','comprendáis','comprendan']},
+
+ fr:{presente:['je comprends','tu comprends','il comprend','nous comprenons','vous comprenez','ils comprennent'],preterito:['je compris','tu compris','il comprit','nous comprîmes','vous comprîtes','ils comprirent'],imperfecto:['je comprenais','tu comprenais','il comprenait','nous comprenions','vous compreniez','ils comprenaient'],futuro:['je comprendrai','tu comprendras','il comprendra','nous comprendrons','vous comprendrez','ils comprendront'],condicional:['je comprendrais','tu comprendrais','il comprendrait','nous comprendrions','vous comprendriez','ils comprendraient'],subjuntivo:['que je comprenne','que tu comprennes','qu\'il comprenne','que nous comprenions','que vous compreniez','qu\'ils comprennent']}},
+{v:'responder',t:'Répondre',type:'er',
+ es:{presente:['respondo','respondes','responde','respondemos','respondéis','responden'],preterito:['respondí','respondiste','respondió','respondimos','respondisteis','respondieron'],imperfecto:['respondía','respondías','respondía','respondíamos','respondíais','respondían'],futuro:['responderé','responderás','responderá','responderemos','responderéis','responderán'],condicional:['respondería','responderías','respondería','responderíamos','responderíais','responderían'],subjuntivo:['responda','respondas','responda','respondamos','respondáis','respondan']},
+
+ fr:{presente:['je réponds','tu réponds','il répond','nous répondons','vous répondez','ils répondent'],preterito:['je répondis','tu répondis','il répondit','nous répondîmes','vous répondîtes','ils répondirent'],imperfecto:['je répondais','tu répondais','il répondait','nous répondions','vous répondiez','ils répondaient'],futuro:['je répondrai','tu répondras','il répondra','nous répondrons','vous répondrez','ils répondront'],condicional:['je répondrais','tu répondrais','il répondrait','nous répondrions','vous répondriez','ils répondraient'],subjuntivo:['que je réponde','que tu répondes','qu\'il réponde','que nous répondions','que vous répondiez','qu\'ils répondent']}},
+{v:'vivir',t:'Vivre',type:'ir',
+ es:{presente:['vivo','vives','vive','vivimos','vivís','viven'],preterito:['viví','viviste','vivió','vivimos','vivisteis','vivieron'],imperfecto:['vivía','vivías','vivía','vivíamos','vivíais','vivían'],futuro:['viviré','vivirás','vivirá','viviremos','viviréis','vivirán'],condicional:['viviría','vivirías','viviría','viviríamos','viviríais','vivirían'],subjuntivo:['viva','vivas','viva','vivamos','viváis','vivan']},
+
+ fr:{presente:['je vis','tu vis','il vit','nous vivons','vous vivez','ils vivent'],preterito:['je vécus','tu vécus','il vécut','nous vécûmes','vous vécûtes','ils vécurent'],imperfecto:['je vivais','tu vivais','il vivait','nous vivions','vous viviez','ils vivaient'],futuro:['je vivrai','tu vivras','il vivra','nous vivrons','vous vivrez','ils vivront'],condicional:['je vivrais','tu vivrais','il vivrait','nous vivrions','vous vivriez','ils vivraient'],subjuntivo:['que je vive','que tu vives','qu\'il vive','que nous vivions','que vous viviez','qu\'ils vivent']}},
+{v:'escribir',t:'Écrire',type:'ir',
+ es:{presente:['escribo','escribes','escribe','escribimos','escribís','escriben'],preterito:['escribí','escribiste','escribió','escribimos','escribisteis','escribieron'],imperfecto:['escribía','escribías','escribía','escribíamos','escribíais','escribían'],futuro:['escribiré','escribirás','escribirá','escribiremos','escribiréis','escribirán'],condicional:['escribiría','escribirías','escribiría','escribiríamos','escribiríais','escribirían'],subjuntivo:['escriba','escribas','escriba','escribamos','escribáis','escriban']},
+
+ fr:{presente:['j\'écris','tu écris','il écrit','nous écrivons','vous écrivez','ils écrivent'],preterito:['j\'écrivis','tu écrivis','il écrivit','nous écrivîmes','vous écrivîtes','ils écrivirent'],imperfecto:['j\'écrivais','tu écrivais','il écrivait','nous écrivions','vous écriviez','ils écrivaient'],futuro:['j\'écrirai','tu écriras','il écrira','nous écrirons','vous écrirez','ils écriront'],condicional:['j\'écrirais','tu écrirais','il écrirait','nous écririons','vous écririez','ils écriraient'],subjuntivo:['que j\'écrive','que tu écrives','qu\'il écrive','que nous écrivions','que vous écriviez','qu\'ils écrivent']}},
+{v:'recibir',t:'Recevoir',type:'ir',
+ es:{presente:['recibo','recibes','recibe','recibimos','recibís','reciben'],preterito:['recibí','recibiste','recibió','recibimos','recibisteis','recibieron'],imperfecto:['recibía','recibías','recibía','recibíamos','recibíais','recibían'],futuro:['recibiré','recibirás','recibirá','recibiremos','recibiréis','recibirán'],condicional:['recibiría','recibirías','recibiría','recibiríamos','recibiríais','recibirían'],subjuntivo:['reciba','recibas','reciba','recibamos','recibáis','reciban']},
+
+ fr:{presente:['je reçois','tu reçois','il reçoit','nous recevons','vous recevez','ils reçoivent'],preterito:['je reçus','tu reçus','il reçut','nous reçûmes','vous reçûtes','ils reçurent'],imperfecto:['je recevais','tu recevais','il recevait','nous recevions','vous receviez','ils recevaient'],futuro:['je recevrai','tu recevras','il recevra','nous recevrons','vous recevrez','ils recevront'],condicional:['je recevrais','tu recevrais','il recevrait','nous recevrions','vous recevriez','ils recevraient'],subjuntivo:['que je reçoive','que tu reçoives','qu\'il reçoive','que nous recevions','que vous receviez','qu\'ils reçoivent']}},
+{v:'partir',t:'Partir',type:'ir',
+ es:{presente:['parto','partes','parte','partimos','partís','parten'],preterito:['partí','partiste','partió','partimos','partisteis','partieron'],imperfecto:['partía','partías','partía','partíamos','partíais','partían'],futuro:['partiré','partirás','partirá','partiremos','partiréis','partirán'],condicional:['partiría','partirías','partiría','partiríamos','partiríais','partirían'],subjuntivo:['parta','partas','parta','partamos','partáis','partan']},
+
+ fr:{presente:['je pars','tu pars','il part','nous partons','vous partez','ils partent'],preterito:['je partis','tu partis','il partit','nous partîmes','vous partîtes','ils partirent'],imperfecto:['je partais','tu partais','il partait','nous partions','vous partiez','ils partaient'],futuro:['je partirai','tu partiras','il partira','nous partirons','vous partirez','ils partiront'],condicional:['je partirais','tu partirais','il partirait','nous partirions','vous partiriez','ils partiraient'],subjuntivo:['que je parte','que tu partes','qu\'il parte','que nous partions','que vous partiez','qu\'ils partent']}},
+{v:'subir',t:'Monter',type:'ir',
+ es:{presente:['subo','subes','sube','subimos','subís','suben'],preterito:['subí','subiste','subió','subimos','subisteis','subieron'],imperfecto:['subía','subías','subía','subíamos','subíais','subían'],futuro:['subiré','subirás','subirá','subiremos','subiréis','subirán'],condicional:['subiría','subirías','subiría','subiríamos','subiríais','subirían'],subjuntivo:['suba','subas','suba','subamos','subáis','suban']},
+
+ fr:{presente:['je monte','tu montes','il monte','nous montons','vous montez','ils montent'],preterito:['je montai','tu montas','il monta','nous montâmes','vous montâtes','ils montèrent'],imperfecto:['je montais','tu montais','il montait','nous montions','vous montiez','ils montaient'],futuro:['je monterai','tu monteras','il montera','nous monterons','vous monterez','ils monteront'],condicional:['je monterais','tu monterais','il monterait','nous monterions','vous monteriez','ils monteraient'],subjuntivo:['que je monte','que tu montes','qu\'il monte','que nous montions','que vous montiez','qu\'ils montent']}},
+{v:'abrir',t:'Ouvrir',type:'ir',
+ es:{presente:['abro','abres','abre','abrimos','abrís','abren'],preterito:['abrí','abriste','abrió','abrimos','abristeis','abrieron'],imperfecto:['abría','abrías','abría','abríamos','abríais','abrían'],futuro:['abriré','abrirás','abrirá','abriremos','abriréis','abrirán'],condicional:['abriría','abrirías','abriría','abriríamos','abriríais','abrirían'],subjuntivo:['abra','abras','abra','abramos','abráis','abran']},
+
+ fr:{presente:['j\'ouvre','tu ouvres','il ouvre','nous ouvrons','vous ouvrez','ils ouvrent'],preterito:['j\'ouvris','tu ouvris','il ouvrit','nous ouvrîmes','vous ouvrîtes','ils ouvrirent'],imperfecto:['j\'ouvrais','tu ouvrais','il ouvrait','nous ouvrions','vous ouvriez','ils ouvraient'],futuro:['j\'ouvrirai','tu ouvriras','il ouvrira','nous ouvrirons','vous ouvrirez','ils ouvriront'],condicional:['j\'ouvrirais','tu ouvrirais','il ouvrirait','nous ouvririons','vous ouvririez','ils ouvriraient'],subjuntivo:['que j\'ouvre','que tu ouvres','qu\'il ouvre','que nous ouvrions','que vous ouvriez','qu\'ils ouvrent']}},
+{v:'dormir',t:'Dormir',type:'ir',
+ es:{presente:['duermo','duermes','duerme','dormimos','dormís','duermen'],preterito:['dormí','dormiste','durmió','dormimos','dormisteis','durmieron'],imperfecto:['dormía','dormías','dormía','dormíamos','dormíais','dormían'],futuro:['dormiré','dormirás','dormirá','dormiremos','dormiréis','dormirán'],condicional:['dormiría','dormirías','dormiría','dormiríamos','dormiríais','dormirían'],subjuntivo:['duerma','duermas','duerma','durmamos','durmáis','duerman']},
+
+ fr:{presente:['je dors','tu dors','il dort','nous dormons','vous dormez','ils dorment'],preterito:['je dormis','tu dormis','il dormit','nous dormîmes','vous dormîtes','ils dormirent'],imperfecto:['je dormais','tu dormais','il dormait','nous dormions','vous dormiez','ils dormaient'],futuro:['je dormirai','tu dormiras','il dormira','nous dormirons','vous dormirez','ils dormiront'],condicional:['je dormirais','tu dormirais','il dormirait','nous dormirions','vous dormiriez','ils dormiraient'],subjuntivo:['que je dorme','que tu dormes','qu\'il dorme','que nous dormions','que vous dormiez','qu\'ils dorment']}},
+{v:'sentir',t:'Ressentir / Sentir',type:'ir',
+ es:{presente:['siento','sientes','siente','sentimos','sentís','sienten'],preterito:['sentí','sentiste','sintió','sentimos','sentisteis','sintieron'],imperfecto:['sentía','sentías','sentía','sentíamos','sentíais','sentían'],futuro:['sentiré','sentirás','sentirá','sentiremos','sentiréis','sentirán'],condicional:['sentiría','sentirías','sentiría','sentiríamos','sentiríais','sentirían'],subjuntivo:['sienta','sientas','sienta','sintamos','sintáis','sientan']},
+
+ fr:{presente:['je ressens','tu ressens','il ressent','nous ressentons','vous ressentez','ils ressentent'],preterito:['je ressentis','tu ressentis','il ressentit','nous ressentîmes','vous ressentîtes','ils ressentirent'],imperfecto:['je ressentais','tu ressentais','il ressentait','nous ressentions','vous ressentiez','ils ressentaient'],futuro:['je ressentirai','tu ressentiras','il ressentira','nous ressentirons','vous ressentirez','ils ressentiront'],condicional:['je ressentirais','tu ressentirais','il ressentirait','nous ressentirions','vous ressentiriez','ils ressentiraient'],subjuntivo:['que je ressente','que tu ressentes','qu\'il ressente','que nous ressentions','que vous ressentiez','qu\'ils ressentent']}},
+{v:'pedir',t:'Demander',type:'ir',
+ es:{presente:['pido','pides','pide','pedimos','pedís','piden'],preterito:['pedí','pediste','pidió','pedimos','pedisteis','pidieron'],imperfecto:['pedía','pedías','pedía','pedíamos','pedíais','pedían'],futuro:['pediré','pedirás','pedirá','pediremos','pediréis','pedirán'],condicional:['pediría','pedirías','pediría','pediríamos','pediríais','pedirían'],subjuntivo:['pida','pidas','pida','pidamos','pidáis','pidan']},
+
+ fr:{presente:['je demande','tu demandes','il demande','nous demandons','vous demandez','ils demandent'],preterito:['je demandai','tu demandas','il demanda','nous demandâmes','vous demandâtes','ils demandèrent'],imperfecto:['je demandais','tu demandais','il demandait','nous demandions','vous demandiez','ils demandaient'],futuro:['je demanderai','tu demanderas','il demandera','nous demanderons','vous demanderez','ils demanderont'],condicional:['je demanderais','tu demanderais','il demanderait','nous demanderions','vous demanderiez','ils demanderaient'],subjuntivo:['que je demande','que tu demandes','qu\'il demande','que nous demandions','que vous demandiez','qu\'ils demandent']}},
+{v:'ser',t:'Être (permanent)',type:'irr',
+ es:{presente:['soy','eres','es','somos','sois','son'],preterito:['fui','fuiste','fue','fuimos','fuisteis','fueron'],imperfecto:['era','eras','era','éramos','erais','eran'],futuro:['seré','serás','será','seremos','seréis','serán'],condicional:['sería','serías','sería','seríamos','seríais','serían'],subjuntivo:['sea','seas','sea','seamos','seáis','sean']},
+
+ fr:{presente:['je suis','tu es','il est','nous sommes','vous êtes','ils sont'],preterito:['je fus','tu fus','il fut','nous fûmes','vous fûtes','ils furent'],imperfecto:['j\'étais','tu étais','il était','nous étions','vous étiez','ils étaient'],futuro:['je serai','tu seras','il sera','nous serons','vous serez','ils seront'],condicional:['je serais','tu serais','il serait','nous serions','vous seriez','ils seraient'],subjuntivo:['que je sois','que tu sois','qu\'il soit','que nous soyons','que vous soyez','qu\'ils soient']}},
+{v:'estar',t:'Être (état temporaire)',type:'irr',
+ es:{presente:['estoy','estás','está','estamos','estáis','están'],preterito:['estuve','estuviste','estuvo','estuvimos','estuvisteis','estuvieron'],imperfecto:['estaba','estabas','estaba','estábamos','estabais','estaban'],futuro:['estaré','estarás','estará','estaremos','estaréis','estarán'],condicional:['estaría','estarías','estaría','estaríamos','estaríais','estarían'],subjuntivo:['esté','estés','esté','estemos','estéis','estén']},
+
+ fr:{presente:['je suis','tu es','il est','nous sommes','vous êtes','ils sont'],preterito:['je fus','tu fus','il fut','nous fûmes','vous fûtes','ils furent'],imperfecto:['j\'étais','tu étais','il était','nous étions','vous étiez','ils étaient'],futuro:['je serai','tu seras','il sera','nous serons','vous serez','ils seront'],condicional:['je serais','tu serais','il serait','nous serions','vous seriez','ils seraient'],subjuntivo:['que je sois','que tu sois','qu\'il soit','que nous soyons','que vous soyez','qu\'ils soient']}},
+{v:'tener',t:'Avoir',type:'irr',
+ es:{presente:['tengo','tienes','tiene','tenemos','tenéis','tienen'],preterito:['tuve','tuviste','tuvo','tuvimos','tuvisteis','tuvieron'],imperfecto:['tenía','tenías','tenía','teníamos','teníais','tenían'],futuro:['tendré','tendrás','tendrá','tendremos','tendréis','tendrán'],condicional:['tendría','tendrías','tendría','tendríamos','tendríais','tendrían'],subjuntivo:['tenga','tengas','tenga','tengamos','tengáis','tengan']},
+
+ fr:{presente:['j\'ai','tu as','il a','nous avons','vous avez','ils ont'],preterito:['j\'eus','tu eus','il eut','nous eûmes','vous eûtes','ils eurent'],imperfecto:['j\'avais','tu avais','il avait','nous avions','vous aviez','ils avaient'],futuro:['j\'aurai','tu auras','il aura','nous aurons','vous aurez','ils auront'],condicional:['j\'aurais','tu aurais','il aurait','nous aurions','vous auriez','ils auraient'],subjuntivo:['que j\'aie','que tu aies','qu\'il ait','que nous ayons','que vous ayez','qu\'ils aient']}},
+{v:'hacer',t:'Faire',type:'irr',
+ es:{presente:['hago','haces','hace','hacemos','hacéis','hacen'],preterito:['hice','hiciste','hizo','hicimos','hicisteis','hicieron'],imperfecto:['hacía','hacías','hacía','hacíamos','hacíais','hacían'],futuro:['haré','harás','hará','haremos','haréis','harán'],condicional:['haría','harías','haría','haríamos','haríais','harían'],subjuntivo:['haga','hagas','haga','hagamos','hagáis','hagan']},
+
+ fr:{presente:['je fais','tu fais','il fait','nous faisons','vous faites','ils font'],preterito:['je fis','tu fis','il fit','nous fîmes','vous fîtes','ils firent'],imperfecto:['je faisais','tu faisais','il faisait','nous faisions','vous faisiez','ils faisaient'],futuro:['je ferai','tu feras','il fera','nous ferons','vous ferez','ils feront'],condicional:['je ferais','tu ferais','il ferait','nous ferions','vous feriez','ils feraient'],subjuntivo:['que je fasse','que tu fasses','qu\'il fasse','que nous fassions','que vous fassiez','qu\'ils fassent']}},
+{v:'ir',t:'Aller',type:'irr',
+ es:{presente:['voy','vas','va','vamos','vais','van'],preterito:['fui','fuiste','fue','fuimos','fuisteis','fueron'],imperfecto:['iba','ibas','iba','íbamos','ibais','iban'],futuro:['iré','irás','irá','iremos','iréis','irán'],condicional:['iría','irías','iría','iríamos','iríais','irían'],subjuntivo:['vaya','vayas','vaya','vayamos','vayáis','vayan']},
+
+ fr:{presente:['je vais','tu vas','il va','nous allons','vous allez','ils vont'],preterito:['j\'allai','tu allas','il alla','nous allâmes','vous allâtes','ils allèrent'],imperfecto:['j\'allais','tu allais','il allait','nous allions','vous alliez','ils allaient'],futuro:['j\'irai','tu iras','il ira','nous irons','vous irez','ils iront'],condicional:['j\'irais','tu irais','il irait','nous irions','vous iriez','ils iraient'],subjuntivo:['que j\'aille','que tu ailles','qu\'il aille','que nous allions','que vous alliez','qu\'ils aillent']}},
+{v:'poder',t:'Pouvoir',type:'irr',
+ es:{presente:['puedo','puedes','puede','podemos','podéis','pueden'],preterito:['pude','pudiste','pudo','pudimos','pudisteis','pudieron'],imperfecto:['podía','podías','podía','podíamos','podíais','podían'],futuro:['podré','podrás','podrá','podremos','podréis','podrán'],condicional:['podría','podrías','podría','podríamos','podríais','podrían'],subjuntivo:['pueda','puedas','pueda','podamos','podáis','puedan']},
+
+ fr:{presente:['je peux','tu peux','il peut','nous pouvons','vous pouvez','ils peuvent'],preterito:['je pus','tu pus','il put','nous pûmes','vous pûtes','ils purent'],imperfecto:['je pouvais','tu pouvais','il pouvait','nous pouvions','vous pouviez','ils pouvaient'],futuro:['je pourrai','tu pourras','il pourra','nous pourrons','vous pourrez','ils pourront'],condicional:['je pourrais','tu pourrais','il pourrait','nous pourrions','vous pourriez','ils pourraient'],subjuntivo:['que je puisse','que tu puisses','qu\'il puisse','que nous puissions','que vous puissiez','qu\'ils puissent']}},
+{v:'querer',t:'Vouloir / Aimer',type:'irr',
+ es:{presente:['quiero','quieres','quiere','queremos','queréis','quieren'],preterito:['quise','quisiste','quiso','quisimos','quisisteis','quisieron'],imperfecto:['quería','querías','quería','queríamos','queríais','querían'],futuro:['querré','querrás','querrá','querremos','querréis','querrán'],condicional:['querría','querrías','querría','querríamos','querríais','querrían'],subjuntivo:['quiera','quieras','quiera','queramos','queráis','quieran']},
+
+ fr:{presente:['je veux','tu veux','il veut','nous voulons','vous voulez','ils veulent'],preterito:['je voulus','tu voulus','il voulut','nous voulûmes','vous voulûtes','ils voulurent'],imperfecto:['je voulais','tu voulais','il voulait','nous voulions','vous vouliez','ils voulaient'],futuro:['je voudrai','tu voudras','il voudra','nous voudrons','vous voudrez','ils voudront'],condicional:['je voudrais','tu voudrais','il voudrait','nous voudrions','vous voudriez','ils voudraient'],subjuntivo:['que je veuille','que tu veuilles','qu\'il veuille','que nous voulions','que vous vouliez','qu\'ils veuillent']}},
+{v:'saber',t:'Savoir',type:'irr',
+ es:{presente:['sé','sabes','sabe','sabemos','sabéis','saben'],preterito:['supe','supiste','supo','supimos','supisteis','supieron'],imperfecto:['sabía','sabías','sabía','sabíamos','sabíais','sabían'],futuro:['sabré','sabrás','sabrá','sabremos','sabréis','sabrán'],condicional:['sabría','sabrías','sabría','sabríamos','sabríais','sabrían'],subjuntivo:['sepa','sepas','sepa','sepamos','sepáis','sepan']},
+
+ fr:{presente:['je sais','tu sais','il sait','nous savons','vous savez','ils savent'],preterito:['je sus','tu sus','il sut','nous sûmes','vous sûtes','ils surent'],imperfecto:['je savais','tu savais','il savait','nous savions','vous saviez','ils savaient'],futuro:['je saurai','tu sauras','il saura','nous saurons','vous saurez','ils sauront'],condicional:['je saurais','tu saurais','il saurait','nous saurions','vous sauriez','ils sauraient'],subjuntivo:['que je sache','que tu saches','qu\'il sache','que nous sachions','que vous sachiez','qu\'ils sachent']}},
+{v:'venir',t:'Venir',type:'irr',
+ es:{presente:['vengo','vienes','viene','venimos','venís','vienen'],preterito:['vine','viniste','vino','vinimos','vinisteis','vinieron'],imperfecto:['venía','venías','venía','veníamos','veníais','venían'],futuro:['vendré','vendrás','vendrá','vendremos','vendréis','vendrán'],condicional:['vendría','vendrías','vendría','vendríamos','vendríais','vendrían'],subjuntivo:['venga','vengas','venga','vengamos','vengáis','vengan']},
+
+ fr:{presente:['je viens','tu viens','il vient','nous venons','vous venez','ils viennent'],preterito:['je vins','tu vins','il vint','nous vînmes','vous vîntes','ils vinrent'],imperfecto:['je venais','tu venais','il venait','nous venions','vous veniez','ils venaient'],futuro:['je viendrai','tu viendras','il viendra','nous viendrons','vous viendrez','ils viendront'],condicional:['je viendrais','tu viendrais','il viendrait','nous viendrions','vous viendriez','ils viendraient'],subjuntivo:['que je vienne','que tu viennes','qu\'il vienne','que nous venions','que vous veniez','qu\'ils viennent']}},
+{v:'decir',t:'Dire',type:'irr',
+ es:{presente:['digo','dices','dice','decimos','decís','dicen'],preterito:['dije','dijiste','dijo','dijimos','dijisteis','dijeron'],imperfecto:['decía','decías','decía','decíamos','decíais','decían'],futuro:['diré','dirás','dirá','diremos','diréis','dirán'],condicional:['diría','dirías','diría','diríamos','diríais','dirían'],subjuntivo:['diga','digas','diga','digamos','digáis','digan']},
+
+ fr:{presente:['je dis','tu dis','il dit','nous disons','vous dites','ils disent'],preterito:['je dis','tu dis','il dit','nous dîmes','vous dîtes','ils dirent'],imperfecto:['je disais','tu disais','il disait','nous disions','vous disiez','ils disaient'],futuro:['je dirai','tu diras','il dira','nous dirons','vous direz','ils diront'],condicional:['je dirais','tu dirais','il dirait','nous dirions','vous diriez','ils diraient'],subjuntivo:['que je dise','que tu dises','qu\'il dise','que nous disions','que vous disiez','qu\'ils disent']}},
+{v:'ver',t:'Voir',type:'irr',
+ es:{presente:['veo','ves','ve','vemos','veis','ven'],preterito:['vi','viste','vio','vimos','visteis','vieron'],imperfecto:['veía','veías','veía','veíamos','veíais','veían'],futuro:['veré','verás','verá','veremos','veréis','verán'],condicional:['vería','verías','vería','veríamos','veríais','verían'],subjuntivo:['vea','veas','vea','veamos','veáis','vean']},
+
+ fr:{presente:['je vois','tu vois','il voit','nous voyons','vous voyez','ils voient'],preterito:['je vis','tu vis','il vit','nous vîmes','vous vîtes','ils virent'],imperfecto:['je voyais','tu voyais','il voyait','nous voyions','vous voyiez','ils voyaient'],futuro:['je verrai','tu verras','il verra','nous verrons','vous verrez','ils verront'],condicional:['je verrais','tu verrais','il verrait','nous verrions','vous verriez','ils verraient'],subjuntivo:['que je voie','que tu voies','qu\'il voie','que nous voyions','que vous voyiez','qu\'ils voient']}},
+{v:'dar',t:'Donner',type:'irr',
+ es:{presente:['doy','das','da','damos','dais','dan'],preterito:['di','diste','dio','dimos','disteis','dieron'],imperfecto:['daba','dabas','daba','dábamos','dabais','daban'],futuro:['daré','darás','dará','daremos','daréis','darán'],condicional:['daría','darías','daría','daríamos','daríais','darían'],subjuntivo:['dé','des','dé','demos','deis','den']},
+
+ fr:{presente:['je donne','tu donnes','il donne','nous donnons','vous donnez','ils donnent'],preterito:['je donnai','tu donnas','il donna','nous donnâmes','vous donnâtes','ils donnèrent'],imperfecto:['je donnais','tu donnais','il donnait','nous donnions','vous donniez','ils donnaient'],futuro:['je donnerai','tu donneras','il donnera','nous donnerons','vous donnerez','ils donneront'],condicional:['je donnerais','tu donnerais','il donnerait','nous donnerions','vous donneriez','ils donneraient'],subjuntivo:['que je donne','que tu donnes','qu\'il donne','que nous donnions','que vous donniez','qu\'ils donnent']}},
+{v:'poner',t:'Mettre / Poser',type:'irr',
+ es:{presente:['pongo','pones','pone','ponemos','ponéis','ponen'],preterito:['puse','pusiste','puso','pusimos','pusisteis','pusieron'],imperfecto:['ponía','ponías','ponía','poníamos','poníais','ponían'],futuro:['pondré','pondrás','pondrá','pondremos','pondréis','pondrán'],condicional:['pondría','pondrías','pondría','pondríamos','pondríais','pondrían'],subjuntivo:['ponga','pongas','ponga','pongamos','pongáis','pongan']},
+
+ fr:{presente:['je mets','tu mets','il met','nous mettons','vous mettez','ils mettent'],preterito:['je mis','tu mis','il mit','nous mîmes','vous mîtes','ils mirent'],imperfecto:['je mettais','tu mettais','il mettait','nous mettions','vous mettiez','ils mettaient'],futuro:['je mettrai','tu mettras','il mettra','nous mettrons','vous mettrez','ils mettront'],condicional:['je mettrais','tu mettrais','il mettrait','nous mettrions','vous mettriez','ils mettraient'],subjuntivo:['que je mette','que tu mettes','qu\'il mette','que nous mettions','que vous mettiez','qu\'ils mettent']}},
+{v:'salir',t:'Sortir',type:'irr',
+ es:{presente:['salgo','sales','sale','salimos','salís','salen'],preterito:['salí','saliste','salió','salimos','salisteis','salieron'],imperfecto:['salía','salías','salía','salíamos','salíais','salían'],futuro:['saldré','saldrás','saldrá','saldremos','saldréis','saldrán'],condicional:['saldría','saldrías','saldría','saldríamos','saldríais','saldrían'],subjuntivo:['salga','salgas','salga','salgamos','salgáis','salgan']},
+
+ fr:{presente:['je sors','tu sors','il sort','nous sortons','vous sortez','ils sortent'],preterito:['je sortis','tu sortis','il sortit','nous sortîmes','vous sortîtes','ils sortirent'],imperfecto:['je sortais','tu sortais','il sortait','nous sortions','vous sortiez','ils sortaient'],futuro:['je sortirai','tu sortiras','il sortira','nous sortirons','vous sortirez','ils sortiront'],condicional:['je sortirais','tu sortirais','il sortirait','nous sortirions','vous sortiriez','ils sortiraient'],subjuntivo:['que je sorte','que tu sortes','qu\'il sorte','que nous sortions','que vous sortiez','qu\'ils sortent']}},
+{v:'traer',t:'Apporter',type:'irr',
+ es:{presente:['traigo','traes','trae','traemos','traéis','traen'],preterito:['traje','trajiste','trajo','trajimos','trajisteis','trajeron'],imperfecto:['traía','traías','traía','traíamos','traíais','traían'],futuro:['traeré','traerás','traerá','traeremos','traeréis','traerán'],condicional:['traería','traerías','traería','traeríamos','traeríais','traerían'],subjuntivo:['traiga','traigas','traiga','traigamos','traigáis','traigan']},
+
+ fr:{presente:['j\'apporte','tu apportes','il apporte','nous apportons','vous apportez','ils apportent'],preterito:['j\'apportai','tu apportas','il apporta','nous apportâmes','vous apportâtes','ils apportèrent'],imperfecto:['j\'apportais','tu apportais','il apportait','nous apportions','vous apportiez','ils apportaient'],futuro:['j\'apporterai','tu apporteras','il apportera','nous apporterons','vous apporterez','ils apporteront'],condicional:['j\'apporterais','tu apporterais','il apporterait','nous apporterions','vous apporteriez','ils apporteraient'],subjuntivo:['que j\'apporte','que tu apportes','qu\'il apporte','que nous apportions','que vous apportiez','qu\'ils apportent']}},
+{v:'conocer',t:'Connaître',type:'irr',
+ es:{presente:['conozco','conoces','conoce','conocemos','conocéis','conocen'],preterito:['conocí','conociste','conoció','conocimos','conocisteis','conocieron'],imperfecto:['conocía','conocías','conocía','conocíamos','conocíais','conocían'],futuro:['conoceré','conocerás','conocerá','conoceremos','conoceréis','conocerán'],condicional:['conocería','conocerías','conocería','conoceríamos','conoceríais','conocerían'],subjuntivo:['conozca','conozcas','conozca','conozcamos','conozcáis','conozcan']},
+
+ fr:{presente:['je connais','tu connais','il connaît','nous connaissons','vous connaissez','ils connaissent'],preterito:['je connus','tu connus','il connut','nous connûmes','vous connûtes','ils connurent'],imperfecto:['je connaissais','tu connaissais','il connaissait','nous connaissions','vous connaissiez','ils connaissaient'],futuro:['je connaîtrai','tu connaîtras','il connaîtra','nous connaîtrons','vous connaîtrez','ils connaîtront'],condicional:['je connaîtrais','tu connaîtrais','il connaîtrait','nous connaîtrions','vous connaîtriez','ils connaîtraient'],subjuntivo:['que je connaisse','que tu connaisses','qu\'il connaisse','que nous connaissions','que vous connaissiez','qu\'ils connaissent']}},
+{v:'conducir',t:'Conduire',type:'irr',
+ es:{presente:['conduzco','conduces','conduce','conducimos','conducís','conducen'],preterito:['conduje','condujiste','condujo','condujimos','condujisteis','condujeron'],imperfecto:['conducía','conducías','conducía','conducíamos','conducíais','conducían'],futuro:['conduciré','conducirás','conducirá','conduciremos','conduciréis','conducirán'],condicional:['conduciría','conducirías','conduciría','conduciríamos','conduciríais','conducirían'],subjuntivo:['conduzca','conduzcas','conduzca','conduzcamos','conduzcáis','conduzcan']},
+
+ fr:{presente:['je conduis','tu conduis','il conduit','nous conduisons','vous conduisez','ils conduisent'],preterito:['je conduisis','tu conduisis','il conduisit','nous conduisîmes','vous conduisîtes','ils conduisirent'],imperfecto:['je conduisais','tu conduisais','il conduisait','nous conduisions','vous conduisiez','ils conduisaient'],futuro:['je conduirai','tu conduiras','il conduira','nous conduirons','vous conduirez','ils conduiront'],condicional:['je conduirais','tu conduirais','il conduirait','nous conduirions','vous conduiriez','ils conduiraient'],subjuntivo:['que je conduise','que tu conduises','qu\'il conduise','que nous conduisions','que vous conduisiez','qu\'ils conduisent']}},
+{v:'seguir',t:'Suivre / Continuer',type:'irr',
+ es:{presente:['sigo','sigues','sigue','seguimos','seguís','siguen'],preterito:['seguí','seguiste','siguió','seguimos','seguisteis','siguieron'],imperfecto:['seguía','seguías','seguía','seguíamos','seguíais','seguían'],futuro:['seguiré','seguirás','seguirá','seguiremos','seguiréis','seguirán'],condicional:['seguiría','seguirías','seguiría','seguiríamos','seguiríais','seguirían'],subjuntivo:['siga','sigas','siga','sigamos','sigáis','sigan']},
+
+ fr:{presente:['je suis','tu suis','il suit','nous suivons','vous suivez','ils suivent'],preterito:['je suivis','tu suivis','il suivit','nous suivîmes','vous suivîtes','ils suivirent'],imperfecto:['je suivais','tu suivais','il suivait','nous suivions','vous suiviez','ils suivaient'],futuro:['je suivrai','tu suivras','il suivra','nous suivrons','vous suivrez','ils suivront'],condicional:['je suivrais','tu suivrais','il suivrait','nous suivrions','vous suivriez','ils suivraient'],subjuntivo:['que je suive','que tu suives','qu\'il suive','que nous suivions','que vous suiviez','qu\'ils suivent']}},
+{v:'volver',t:'Retourner / Revenir',type:'irr',
+ es:{presente:['vuelvo','vuelves','vuelve','volvemos','volvéis','vuelven'],preterito:['volví','volviste','volvió','volvimos','volvisteis','volvieron'],imperfecto:['volvía','volvías','volvía','volvíamos','volvíais','volvían'],futuro:['volveré','volverás','volverá','volveremos','volveréis','volverán'],condicional:['volvería','volverías','volvería','volveríamos','volveríais','volverían'],subjuntivo:['vuelva','vuelvas','vuelva','volvamos','volváis','vuelvan']},
+
+ fr:{presente:['je retourne','tu retournes','il retourne','nous retournons','vous retournez','ils retournent'],preterito:['je retournai','tu retournas','il retourna','nous retournâmes','vous retournâtes','ils retournèrent'],imperfecto:['je retournais','tu retournais','il retournait','nous retournions','vous retourniez','ils retournaient'],futuro:['je retournerai','tu retourneras','il retournera','nous retournerons','vous retournerez','ils retourneront'],condicional:['je retournerais','tu retournerais','il retournerait','nous retournerions','vous retourneriez','ils retourneraient'],subjuntivo:['que je retourne','que tu retournes','qu\'il retourne','que nous retournions','que vous retourniez','qu\'ils retournent']}},
+{v:'entender',t:'Comprendre',type:'irr',
+ es:{presente:['entiendo','entiendes','entiende','entendemos','entendéis','entienden'],preterito:['entendí','entendiste','entendió','entendimos','entendisteis','entendieron'],imperfecto:['entendía','entendías','entendía','entendíamos','entendíais','entendían'],futuro:['entenderé','entenderás','entenderá','entenderemos','entenderéis','entenderán'],condicional:['entendería','entenderías','entendería','entenderíamos','entenderíais','entenderían'],subjuntivo:['entienda','entiendas','entienda','entendamos','entendáis','entiendan']},
+
+ fr:{presente:['je comprends','tu comprends','il comprend','nous comprenons','vous comprenez','ils comprennent'],preterito:['je compris','tu compris','il comprit','nous comprîmes','vous comprîtes','ils comprirent'],imperfecto:['je comprenais','tu comprenais','il comprenait','nous comprenions','vous compreniez','ils comprenaient'],futuro:['je comprendrai','tu comprendras','il comprendra','nous comprendrons','vous comprendrez','ils comprendront'],condicional:['je comprendrais','tu comprendrais','il comprendrait','nous comprendrions','vous comprendriez','ils comprendraient'],subjuntivo:['que je comprenne','que tu comprennes','qu\'il comprenne','que nous comprenions','que vous compreniez','qu\'ils comprennent']}},
+{v:'perder',t:'Perdre',type:'irr',
+ es:{presente:['pierdo','pierdes','pierde','perdemos','perdéis','pierden'],preterito:['perdí','perdiste','perdió','perdimos','perdisteis','perdieron'],imperfecto:['perdía','perdías','perdía','perdíamos','perdíais','perdían'],futuro:['perderé','perderás','perderá','perderemos','perderéis','perderán'],condicional:['perdería','perderías','perdería','perderíamos','perderíais','perderían'],subjuntivo:['pierda','pierdas','pierda','perdamos','perdáis','pierdan']},
+
+ fr:{presente:['je perds','tu perds','il perd','nous perdons','vous perdez','ils perdent'],preterito:['je perdis','tu perdis','il perdit','nous perdîmes','vous perdîtes','ils perdirent'],imperfecto:['je perdais','tu perdais','il perdait','nous perdions','vous perdiez','ils perdaient'],futuro:['je perdrai','tu perdras','il perdra','nous perdrons','vous perdrez','ils perdront'],condicional:['je perdrais','tu perdrais','il perdrait','nous perdrions','vous perdriez','ils perdraient'],subjuntivo:['que je perde','que tu perdes','qu\'il perde','que nous perdions','que vous perdiez','qu\'ils perdent']}},
+{v:'pensar',t:'Penser',type:'irr',
+ es:{presente:['pienso','piensas','piensa','pensamos','pensáis','piensan'],preterito:['pensé','pensaste','pensó','pensamos','pensasteis','pensaron'],imperfecto:['pensaba','pensabas','pensaba','pensábamos','pensabais','pensaban'],futuro:['pensaré','pensarás','pensará','pensaremos','pensaréis','pensarán'],condicional:['pensaría','pensarías','pensaría','pensaríamos','pensaríais','pensarían'],subjuntivo:['piense','pienses','piense','pensemos','penséis','piensen']},
+
+ fr:{presente:['je pense','tu penses','il pense','nous pensons','vous pensez','ils pensent'],preterito:['je pensai','tu pensas','il pensa','nous pensâmes','vous pensâtes','ils pensèrent'],imperfecto:['je pensais','tu pensais','il pensait','nous pensions','vous pensiez','ils pensaient'],futuro:['je penserai','tu penseras','il pensera','nous penserons','vous penserez','ils penseront'],condicional:['je penserais','tu penserais','il penserait','nous penserions','vous penseriez','ils penseraient'],subjuntivo:['que je pense','que tu penses','qu\'il pense','que nous pensions','que vous pensiez','qu\'ils pensent']}},
+{v:'encontrar',t:'Trouver / Rencontrer',type:'irr',
+ es:{presente:['encuentro','encuentras','encuentra','encontramos','encontráis','encuentran'],preterito:['encontré','encontraste','encontró','encontramos','encontrasteis','encontraron'],imperfecto:['encontraba','encontrabas','encontraba','encontrábamos','encontrabais','encontraban'],futuro:['encontraré','encontrarás','encontrará','encontraremos','encontraréis','encontrarán'],condicional:['encontraría','encontrarías','encontraría','encontraríamos','encontraríais','encontrarían'],subjuntivo:['encuentre','encuentres','encuentre','encontremos','encontréis','encuentren']},
+
+ fr:{presente:['je trouve','tu trouves','il trouve','nous trouvons','vous trouvez','ils trouvent'],preterito:['je trouvai','tu trouvas','il trouva','nous trouvâmes','vous trouvâtes','ils trouvèrent'],imperfecto:['je trouvais','tu trouvais','il trouvait','nous trouvions','vous trouviez','ils trouvaient'],futuro:['je trouverai','tu trouveras','il trouvera','nous trouverons','vous trouverez','ils trouveront'],condicional:['je trouverais','tu trouverais','il trouverait','nous trouverions','vous trouveriez','ils trouveraient'],subjuntivo:['que je trouve','que tu trouves','qu\'il trouve','que nous trouvions','que vous trouviez','qu\'ils trouvent']}},
+{v:'oír',t:'Entendre',type:'irr',
+ es:{presente:['oigo','oyes','oye','oímos','oís','oyen'],preterito:['oí','oíste','oyó','oímos','oísteis','oyeron'],imperfecto:['oía','oías','oía','oíamos','oíais','oían'],futuro:['oiré','oirás','oirá','oiremos','oiréis','oirán'],condicional:['oiría','oirías','oiría','oiríamos','oiríais','oirían'],subjuntivo:['oiga','oigas','oiga','oigamos','oigáis','oigan']},
+
+ fr:{presente:['j\'entends','tu entends','il entend','nous entendons','vous entendez','ils entendent'],preterito:['j\'entendis','tu entendis','il entendit','nous entendîmes','vous entendîtes','ils entendirent'],imperfecto:['j\'entendais','tu entendais','il entendait','nous entendions','vous entendiez','ils entendaient'],futuro:['j\'entendrai','tu entendras','il entendra','nous entendrons','vous entendrez','ils entendront'],condicional:['j\'entendrais','tu entendrais','il entendrait','nous entendrions','vous entendriez','ils entendraient'],subjuntivo:['que j\'entende','que tu entendes','qu\'il entende','que nous entendions','que vous entendiez','qu\'ils entendent']}},
+{v:'haber',t:'Avoir (auxiliaire)',type:'irr',
+ es:{presente:['he','has','ha','hemos','habéis','han'],preterito:['hube','hubiste','hubo','hubimos','hubisteis','hubieron'],imperfecto:['había','habías','había','habíamos','habíais','habían'],futuro:['habré','habrás','habrá','habremos','habréis','habrán'],condicional:['habría','habrías','habría','habríamos','habríais','habrían'],subjuntivo:['haya','hayas','haya','hayamos','hayáis','hayan']},
+
+ fr:{presente:['j\'ai','tu as','il a','nous avons','vous avez','ils ont'],preterito:['j\'eus','tu eus','il eut','nous eûmes','vous eûtes','ils eurent'],imperfecto:['j\'avais','tu avais','il avait','nous avions','vous aviez','ils avaient'],futuro:['j\'aurai','tu auras','il aura','nous aurons','vous aurez','ils auront'],condicional:['j\'aurais','tu aurais','il aurait','nous aurions','vous auriez','ils auraient'],subjuntivo:['que j\'aie','que tu aies','qu\'il ait','que nous ayons','que vous ayez','qu\'ils aient']}},
+{v:'caer',t:'Tomber',type:'irr',
+ es:{presente:['caigo','caes','cae','caemos','caéis','caen'],preterito:['caí','caíste','cayó','caímos','caísteis','cayeron'],imperfecto:['caía','caías','caía','caíamos','caíais','caían'],futuro:['caeré','caerás','caerá','caeremos','caeréis','caerán'],condicional:['caería','caerías','caería','caeríamos','caeríais','caerían'],subjuntivo:['caiga','caigas','caiga','caigamos','caigáis','caigan']},
+
+ fr:{presente:['je tombe','tu tombes','il tombe','nous tombons','vous tombez','ils tombent'],preterito:['je tombai','tu tombas','il tomba','nous tombâmes','vous tombâtes','ils tombèrent'],imperfecto:['je tombais','tu tombais','il tombait','nous tombions','vous tombiez','ils tombaient'],futuro:['je tomberai','tu tomberas','il tombera','nous tomberons','vous tomberez','ils tomberont'],condicional:['je tomberais','tu tomberais','il tomberait','nous tomberions','vous tomberiez','ils tomberaient'],subjuntivo:['que je tombe','que tu tombes','qu\'il tombe','que nous tombions','que vous tombiez','qu\'ils tombent']}},
+];
+let score={correct:0,wrong:0,total:0},currentVerb,currentTense,currentPronounIdx,answered=false,selectedTense='presente',flashCards=[],flashIdx=0,tableVerbs=[...VERBS];
+
+function init(){buildTenseSelector();nextQuestion();buildVerbList();initFlash();}
+function buildTenseSelector(){document.getElementById('tenseSelector').innerHTML=Object.entries(TENSES).map(([k,v])=>`<button class="tense-btn${k===selectedTense?' active':''}" onclick="setTense('${k}')">${v.n}</button>`).join('');}
+function setTense(t){selectedTense=t;buildTenseSelector();nextQuestion();}
+function nextQuestion(){
+  answered=false;
+  const inp=document.getElementById('answerInput');
+  inp.value='';inp.className='answer-input';
+  document.getElementById('feedbackMsg').textContent='';
+  document.getElementById('feedbackMsg').className='feedback-msg';
+  currentVerb=VERBS[Math.floor(Math.random()*VERBS.length)];
+  currentTense=selectedTense;
+  currentPronounIdx=Math.floor(Math.random()*6);
+  document.getElementById('qVerb').textContent=currentVerb.v;
+  document.getElementById('qTrans').textContent='('+currentVerb.t+')';
+  const tl={ar:'-AR',er:'-ER',ir:'-IR',irr:'Irrégulier'};
+  document.getElementById('qType').textContent=tl[currentVerb.type];
+  document.getElementById('qTenseName').textContent=TENSES[currentTense].n;
+  document.getElementById('qPronoun').textContent=PRONOUNS[currentPronounIdx];
+  inp.focus();
+}
+function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function checkAnswer(){
+  if(answered){nextQuestion();return;}
+  const inp=document.getElementById('answerInput');
+  const ua=norm(inp.value);
+  const correct=currentVerb.es[currentTense][currentPronounIdx];
+  answered=true;score.total++;
+  if(ua===norm(correct)){
+    score.correct++;inp.className='answer-input correct';
+    document.getElementById('feedbackMsg').textContent='✓ Bravo !';
+    document.getElementById('feedbackMsg').className='feedback-msg correct';
+  } else {
+    score.wrong++;inp.className='answer-input wrong';
+    document.getElementById('feedbackMsg').textContent='✗ Réponse : '+correct+' ('+currentVerb.es[currentTense][currentPronounIdx]+')';
+    document.getElementById('feedbackMsg').className='feedback-msg wrong';
+  }
+  updateScore();
+}
+function showHint(){const c=currentVerb.es[currentTense][currentPronounIdx];document.getElementById('feedbackMsg').textContent='Indice : '+c.substring(0,3)+'...';}
+function updateScore(){
+  document.getElementById('scoreCorrect').textContent=score.correct;
+  document.getElementById('scoreWrong').textContent=score.wrong;
+  document.getElementById('scoreTotal').textContent=score.total;
+  const p=score.total>0?Math.round(score.correct/score.total*100):0;
+  document.getElementById('progressFill').style.width=p+'%';
+}
+function resetScore(){score={correct:0,wrong:0,total:0};updateScore();}
+function buildVerbList(){
+  const bc={ar:'badge-ar',er:'badge-er',ir:'badge-ir',irr:'badge-irr'};
+  const tl={ar:'-AR',er:'-ER',ir:'-IR',irr:'IRR'};
+  document.getElementById('verbList').innerHTML=tableVerbs.map(v=>`<div class="verb-item" onclick="showTable('${v.v}')"><div class="vi-name">${v.v}</div><div class="vi-trans">${v.t}</div><span class="badge ${bc[v.type]}">${tl[v.type]}</span></div>`).join('');
+}
+function filterTableVerbs(){
+  const s=document.getElementById('tableSearch').value.toLowerCase();
+  const t=document.getElementById('tableTypeFilter').value;
+  tableVerbs=VERBS.filter(v=>(v.v.includes(s)||v.t.toLowerCase().includes(s))&&(!t||v.type===t));
+  buildVerbList();
+}
+function showTable(vn){
+  const verb=VERBS.find(v=>v.v===vn);if(!verb)return;
+  document.getElementById('tableVerbName').textContent=verb.v;
+  document.getElementById('tableVerbTrans').textContent=verb.t;
+  document.getElementById('tenseGrid').innerHTML=Object.entries(TENSES).map(([key,info])=>`
+    <div class="tense-block">
+      <div class="tense-title">${info.fr}</div>
+      ${PRONOUNS.map((p,i)=>`
+        <div class="conj-row">
+          <span class="conj-pronoun">${p}</span>
+          <span class="conj-form">${verb.es[key][i]}</span>
+          <span class="conj-fr">${verb.fr[key][i]}</span>
+        </div>
+      `).join('')}
+    </div>`).join('');
+}
+function initFlash(){
+  const tense=document.getElementById('flashTenseFilter').value;
+  const type=document.getElementById('flashTypeFilter').value;
+  const verbs=VERBS.filter(v=>!type||v.type===type);
+  flashCards=[];
+  verbs.forEach(v=>PRONOUNS.forEach((p,i)=>flashCards.push({verb:v,pronoun:p,tense,idx:i})));
+  flashIdx=0;showFlashCard();
+}
+function showFlashCard(){
+  const c=flashCards[flashIdx];if(!c)return;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fcVerb').textContent=c.verb.v;
+  document.getElementById('fcPronoun').textContent=c.pronoun;
+  document.getElementById('fcTenseBadge').textContent=TENSES[c.tense].n;
+  document.getElementById('fcAnswer').textContent=c.verb.es[c.tense][c.idx];
+  document.getElementById('fcFr').textContent=c.verb.fr[c.tense][c.idx];
+  document.getElementById('flashCounter').textContent=(flashIdx+1)+' / '+flashCards.length;
+}
+function flipCard(){document.getElementById('flashcard').classList.toggle('flipped');}
+function flashNav(d){flashIdx=(flashIdx+d+flashCards.length)%flashCards.length;showFlashCard();}
+function shuffleFlash(){for(let i=flashCards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[flashCards[i],flashCards[j]]=[flashCards[j],flashCards[i]];}flashIdx=0;showFlashCard();}
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['quiz','table','flash'][i]===tab));
+  ['quiz','table','flash'].forEach(m=>document.getElementById('mode-'+m).classList.toggle('active',m===tab));
+}
+init();
+</script>
+</body>
+</html>
