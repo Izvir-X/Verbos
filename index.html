@@ -3,32 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Apprendre la conjugaison espagnole : quiz, tables de conjugaison et flashcards avec traductions françaises.">
+<meta name="color-scheme" content="light dark">
 <title>ConjugaES — Apprendre l'espagnol</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#f5f0e8; --surface:#faf7f2; --card:#fff; --border:#d8cfc0;
+  --bg:#f5f0e8; --surface:#faf7f2; --card:#fff; --input:#f5f0e8; --input-focus:#fff; --border:#d8cfc0;
   --green:#4a7c59; --green-light:#6a9e78; --green-pale:#e8f0ea;
-  --brown:#8b6f47; --brown-light:#c4a882; --red:#c0553a;
-  --text:#2d2a24; --muted:#9a8e7e; --gold:#b8923a;
+  --brown:#8b6f47; --brown-light:#a8875c; --red:#c0553a; --red-pale:#fdf0ed;
+  --orange:#b8762a; --orange-pale:#fbf1e3;
+  --text:#2d2a24; --muted:#857a6b; --gold:#b8923a; --on-green:#fff;
+  --shadow:rgba(74,124,89,.1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1c1f1b; --surface:#232722; --card:#272c26; --input:#1f231e; --input-focus:#2c322b; --border:#3d453b;
+    --green:#7fb88f; --green-light:#98caa6; --green-pale:#2c3a2f;
+    --brown:#c9a77a; --brown-light:#b89a72; --red:#e57f66; --red-pale:#3a2723;
+    --orange:#e0a55a; --orange-pale:#3a2f20;
+    --text:#ebe6dc; --muted:#a89f90; --gold:#d4b05c; --on-green:#13261a;
+    --shadow:rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1c1f1b; --surface:#232722; --card:#272c26; --input:#1f231e; --input-focus:#2c322b; --border:#3d453b;
+  --green:#7fb88f; --green-light:#98caa6; --green-pale:#2c3a2f;
+  --brown:#c9a77a; --brown-light:#b89a72; --red:#e57f66; --red-pale:#3a2723;
+  --orange:#e0a55a; --orange-pale:#3a2f20;
+  --text:#ebe6dc; --muted:#a89f90; --gold:#d4b05c; --on-green:#13261a;
+  --shadow:rgba(0,0,0,.35);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
   background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%234a7c59' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
-.container{max-width:1100px;margin:0 auto;padding:0 20px;}
-header{padding:40px 0 0;text-align:center;}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+.container{max-width:1100px;margin:0 auto;padding:0 16px;}
+header{padding:40px 0 0;text-align:center;position:relative;}
 .logo-wrap{display:inline-flex;align-items:center;gap:12px;margin-bottom:8px;}
 .logo{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:600;color:var(--green);letter-spacing:-1px;}
 .logo em{color:var(--brown);font-style:italic;}
 .tagline{color:var(--muted);font-size:.8rem;letter-spacing:4px;text-transform:uppercase;}
 .header-divider{width:80px;height:2px;background:linear-gradient(90deg,var(--green),var(--brown-light));margin:16px auto 0;border-radius:2px;}
+.theme-toggle{position:absolute;top:16px;right:0;background:var(--card);border:1.5px solid var(--border);border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:1.1rem;color:var(--text);}
 .tabs{display:flex;justify-content:center;gap:6px;margin:32px 0 24px;flex-wrap:wrap;}
 .tab{padding:10px 24px;border:1.5px solid var(--border);border-radius:40px;background:transparent;color:var(--muted);font-family:'Jost',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
 .tab:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
-.tab.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:500;}
-.score-bar{display:flex;gap:16px;margin-bottom:28px;padding:16px 22px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 12px rgba(74,124,89,.08);}
-.score-item{display:flex;align-items:center;gap:8px;font-size:.85rem;}
+.tab.active{background:var(--green);border-color:var(--green);color:var(--on-green);font-weight:500;}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;padding:16px 22px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 12px var(--shadow);}
+.score-item{display:flex;align-items:center;gap:6px;font-size:.85rem;}
 .score-dot{width:10px;height:10px;border-radius:50%;}
 .score-dot.correct{background:var(--green);}
 .score-dot.wrong{background:var(--red);}
@@ -37,13 +62,18 @@ header{padding:40px 0 0;text-align:center;}
 .score-label{color:var(--muted);}
 .progress-bar{flex:1;height:7px;background:var(--border);border-radius:10px;overflow:hidden;min-width:80px;}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:10px;transition:width .4s ease;}
-#mode-quiz{display:none;}
-#mode-quiz.active{display:block;}
-.tense-selector{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;}
+.settings{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:24px;font-size:.85rem;color:var(--muted);}
+.settings label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+.settings input{accent-color:var(--green);width:16px;height:16px;}
+.mode{display:none;}
+.mode.active{display:block;}
+.tense-selector{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;}
 .tense-btn{padding:8px 18px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--muted);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;}
 .tense-btn:hover{border-color:var(--green);color:var(--green);}
 .tense-btn.active{background:var(--green-pale);border-color:var(--green);color:var(--green);font-weight:500;}
-.quiz-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:44px 40px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(74,124,89,.1);}
+.quiz-filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;align-items:center;}
+.selector-hint{text-align:center;color:var(--muted);font-size:.75rem;margin-bottom:10px;}
+.quiz-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:44px 40px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 4px 24px var(--shadow);}
 .quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),var(--brown-light),var(--gold));}
 .quiz-card::after{content:'🌿';position:absolute;top:16px;right:20px;font-size:1.4rem;opacity:.25;}
 .verb-display{font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--green);margin-bottom:6px;letter-spacing:-1px;line-height:1;}
@@ -51,21 +81,31 @@ header{padding:40px 0 0;text-align:center;}
 .verb-type{display:inline-block;padding:4px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:.72rem;color:var(--muted);margin-bottom:28px;letter-spacing:1.5px;text-transform:uppercase;background:var(--bg);}
 .question-prompt{font-size:1.05rem;color:var(--text);margin-bottom:6px;}
 .pronoun-highlight{color:var(--green);font-weight:600;}
-.answer-input{width:100%;max-width:320px;padding:14px 20px;background:var(--bg);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Jost',sans-serif;font-size:1.1rem;text-align:center;outline:none;transition:border-color .2s;margin:16px 0;}
-.answer-input:focus{border-color:var(--green);background:#fff;}
+.answer-input{width:100%;max-width:320px;padding:14px 20px;background:var(--input);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Jost',sans-serif;font-size:1.1rem;text-align:center;outline:none;transition:border-color .2s;margin:16px 0 8px;}
+.answer-input:focus{border-color:var(--green);background:var(--input-focus);}
 .answer-input.correct{border-color:var(--green);background:var(--green-pale);}
-.answer-input.wrong{border-color:var(--red);background:#fdf0ed;}
+.answer-input.almost{border-color:var(--orange);background:var(--orange-pale);}
+.answer-input.wrong{border-color:var(--red);background:var(--red-pale);}
+.answer-input.shake{animation:shake .3s;}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.accent-keys{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+.accent-key{min-width:36px;height:36px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:1rem;cursor:pointer;}
+.accent-key:hover{border-color:var(--green);color:var(--green);}
 .feedback-msg{min-height:28px;font-size:.95rem;font-weight:500;margin-bottom:8px;}
 .feedback-msg.correct{color:var(--green);}
+.feedback-msg.almost{color:var(--orange);}
 .feedback-msg.wrong{color:var(--red);}
+.feedback-msg.hint{color:var(--muted);letter-spacing:2px;}
+.feedback-fr{display:block;font-weight:400;font-style:italic;color:var(--brown);font-size:.85rem;margin-top:2px;letter-spacing:0;}
 .btn{padding:12px 28px;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
-.btn-primary{background:var(--green);color:#fff;}
-.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:0 4px 12px rgba(74,124,89,.3);}
+.btn-primary{background:var(--green);color:var(--on-green);}
+.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow);}
 .btn-secondary{background:var(--card);border:1.5px solid var(--border);color:var(--muted);}
 .btn-secondary:hover{border-color:var(--green);color:var(--green);}
+.btn-small{padding:8px 16px;font-size:.8rem;}
 .quiz-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-#mode-table{display:none;}
-#mode-table.active{display:block;}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.75rem;margin-top:16px;}
+kbd{font-family:inherit;border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--card);}
 .controls{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
 .search-box{flex:1;min-width:200px;position:relative;}
 .search-box input{width:100%;padding:12px 16px 12px 44px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Jost',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;}
@@ -76,34 +116,34 @@ select{padding:12px 16px;background:var(--card);border:1.5px solid var(--border)
 .verb-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;margin-bottom:24px;max-height:280px;overflow-y:auto;padding-right:4px;}
 .verb-list::-webkit-scrollbar{width:4px;}
 .verb-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-.verb-item{padding:12px 16px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;}
+.verb-item{padding:12px 16px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;text-align:left;font-family:inherit;color:inherit;}
 .verb-item:hover,.verb-item.selected{border-color:var(--green);background:var(--green-pale);}
 .vi-name{font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--green);font-size:1.1rem;}
 .vi-trans{color:var(--muted);font-size:.78rem;margin-top:2px;}
-.conj-table-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(74,124,89,.08);}
-.conj-table-header{padding:24px 28px;border-bottom:1.5px solid var(--border);background:linear-gradient(135deg,var(--green-pale),#fff);display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.conj-table-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 24px var(--shadow);}
+.conj-table-header{padding:24px 28px;border-bottom:1.5px solid var(--border);background:linear-gradient(135deg,var(--green-pale),var(--card));display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .conj-table-header h2{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--green);font-weight:600;}
 .ctrans{display:block;color:var(--brown);font-size:1.05rem;font-style:italic;margin-top:2px;}
 .tenses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}
 .tense-block{padding:22px 26px;border-right:1.5px solid var(--border);border-bottom:1.5px solid var(--border);}
 .tense-title{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--green);margin-bottom:14px;font-weight:500;display:flex;align-items:center;gap:8px;}
 .tense-title::after{content:'';flex:1;height:1px;background:var(--border);}
-.conj-row{display:grid;grid-template-columns:75px 1fr 1fr;align-items:center;padding:8px 0;border-bottom:1px solid rgba(216,207,192,.4);gap:6px;}
+.conj-row{display:grid;grid-template-columns:75px 1fr 1fr 28px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);gap:6px;}
 .conj-row:last-child{border-bottom:none;}
 .conj-pronoun{color:var(--muted);font-size:.8rem;}
 .conj-form{font-size:.95rem;color:var(--text);font-weight:500;}
 .conj-fr{font-size:.82rem;color:var(--brown-light);font-style:italic;}
-#mode-flash{display:none;}
-#mode-flash.active{display:block;}
+.speak-btn{background:none;border:none;cursor:pointer;font-size:.95rem;opacity:.55;padding:2px;border-radius:6px;transition:opacity .2s;}
+.speak-btn:hover{opacity:1;}
+.no-tts .speak-btn,.no-tts .tts-only{display:none;}
 .flashcard-area{perspective:1000px;margin-bottom:24px;}
-.flashcard{width:100%;max-width:480px;margin:0 auto;height:280px;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);cursor:pointer;}
+.flashcard{width:100%;max-width:480px;margin:0 auto;height:280px;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);cursor:pointer;display:block;background:none;border:none;font:inherit;color:inherit;}
 .flashcard.flipped{transform:rotateY(180deg);}
-.fc-face{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;border:1.5px solid var(--border);box-shadow:0 4px 24px rgba(74,124,89,.1);}
+.fc-face{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;border:1.5px solid var(--border);box-shadow:0 4px 24px var(--shadow);}
 .fc-front{background:linear-gradient(135deg,var(--card),var(--green-pale));}
 .fc-back{background:linear-gradient(135deg,var(--green-pale),var(--card));transform:rotateY(180deg);border-color:var(--green);}
 .fc-label{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
 .fc-verb{font-family:'Cormorant Garamond',serif;font-size:3.2rem;color:var(--green);margin-bottom:4px;font-weight:600;}
-
 .fc-sub{color:var(--muted);font-size:.9rem;}
 .fc-fr{color:var(--brown);font-size:.85rem;font-style:italic;margin-top:6px;}
 .fc-tense-badge{position:absolute;top:16px;right:16px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--bg);padding:4px 12px;border-radius:20px;border:1px solid var(--border);}
@@ -111,98 +151,125 @@ select{padding:12px 16px;background:var(--card);border:1.5px solid var(--border)
 .flash-counter{color:var(--muted);font-size:.85rem;min-width:80px;text-align:center;}
 .fc-hint{text-align:center;color:var(--muted);font-size:.8rem;margin:12px 0 20px;}
 .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;letter-spacing:1px;text-transform:uppercase;font-weight:500;margin-top:4px;}
-.badge-ar{background:rgba(74,124,89,.12);color:var(--green);}
-.badge-er{background:rgba(184,146,58,.12);color:var(--gold);}
-.badge-ir{background:rgba(192,85,58,.12);color:var(--red);}
-.badge-irr{background:rgba(139,111,71,.12);color:var(--brown);}
+.badge-ar{background:rgba(74,124,89,.15);color:var(--green);}
+.badge-er{background:rgba(184,146,58,.15);color:var(--gold);}
+.badge-ir{background:rgba(192,85,58,.15);color:var(--red);}
+.badge-irr{background:rgba(139,111,71,.15);color:var(--brown);}
+.badge-ch{background:transparent;border:1px dashed var(--border);color:var(--muted);margin-left:4px;text-transform:none;letter-spacing:.5px;}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 footer{text-align:center;padding:32px 0;color:var(--muted);font-size:.8rem;border-top:1.5px solid var(--border);margin-top:40px;}
 footer span{color:var(--green);font-weight:500;}
 @media(max-width:600px){
+  .logo{font-size:2.3rem;}
+  .theme-toggle{top:8px;}
   .verb-display,.fc-verb{font-size:2.4rem;}
   .quiz-card{padding:28px 16px;}
   .tenses-grid{grid-template-columns:1fr;}
-  
+  .tense-block{padding:18px 16px;}
+  .conj-row{grid-template-columns:62px 1fr 1fr 24px;}
+  .score-bar{padding:14px 16px;gap:12px;}
 }
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;}}
 </style>
 </head>
 <body>
 <div class="container">
 <header>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Changer de thème (clair / sombre)" onclick="toggleTheme()">🌓</button>
   <div class="logo-wrap">
-    <span>🌿</span>
-    <div class="logo">Conjuga<em>ES</em></div>
-    <span>🌿</span>
+    <span aria-hidden="true">🌿</span>
+    <h1 class="logo">Conjuga<em>ES</em></h1>
+    <span aria-hidden="true">🌿</span>
   </div>
   <div class="tagline">Apprendre la conjugaison espagnole</div>
   <div class="header-divider"></div>
 </header>
-<div class="tabs" style="margin-top:32px;">
-  <button class="tab active" onclick="switchTab('quiz')">🎯 Quiz</button>
-  <button class="tab" onclick="switchTab('table')">📋 Tables</button>
-  <button class="tab" onclick="switchTab('flash')">🃏 Flashcards</button>
+<nav class="tabs" role="tablist" aria-label="Modes">
+  <button class="tab active" role="tab" aria-selected="true" data-tab="quiz" onclick="switchTab('quiz')">🎯 Quiz</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="table" onclick="switchTab('table')">📋 Tables</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="flash" onclick="switchTab('flash')">🃏 Flashcards</button>
+</nav>
+<div class="score-bar" aria-live="polite">
+  <div class="score-item"><div class="score-dot correct"></div><span class="score-num" id="scoreCorrect">0</span><span class="score-label">corrects</span></div>
+  <div class="score-item"><div class="score-dot wrong"></div><span class="score-num" id="scoreWrong">0</span><span class="score-label">erreurs</span></div>
+  <div class="score-item"><div class="score-dot total"></div><span class="score-num" id="scoreTotal">0</span><span class="score-label">total</span></div>
+  <div class="score-item" title="Bonnes réponses d'affilée (record entre parenthèses)">🔥<span class="score-num" id="scoreStreak">0</span><span class="score-label">série (record <span id="scoreBest">0</span>)</span></div>
+  <div class="progress-bar" role="progressbar" aria-label="Taux de réussite" aria-valuemin="0" aria-valuemax="100" id="progressBar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <button class="btn btn-secondary btn-small" type="button" onclick="resetScore()">Réinitialiser</button>
 </div>
-<div class="score-bar">
-  <div class="score-item"><div class="score-dot correct"></div><span class="score-num" id="scoreCorrect">0</span><span class="score-label">&nbsp;corrects</span></div>
-  <div class="score-item"><div class="score-dot wrong"></div><span class="score-num" id="scoreWrong">0</span><span class="score-label">&nbsp;erreurs</span></div>
-  <div class="score-item"><div class="score-dot total"></div><span class="score-num" id="scoreTotal">0</span><span class="score-label">&nbsp;total</span></div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  <button class="btn btn-secondary" style="padding:8px 16px;font-size:.8rem;" onclick="resetScore()">Réinitialiser</button>
+<div class="settings">
+  <label><input type="checkbox" id="optVosotros" onchange="setVosotros(this.checked)" checked> Inclure <em>vosotros</em> (décochez pour l'espagnol d'Amérique latine)</label>
 </div>
-<div id="mode-quiz" class="active">
+
+<section id="mode-quiz" class="mode active" role="tabpanel" aria-label="Quiz">
+  <div class="selector-hint">Temps à réviser (plusieurs choix possibles)</div>
   <div class="tense-selector" id="tenseSelector"></div>
+  <div class="quiz-filters">
+    <select id="quizTypeFilter" aria-label="Type de verbe" onchange="setQuizType(this.value)"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
+    <label class="settings" style="margin:0;gap:6px"><input type="checkbox" id="optReview" onchange="setReview(this.checked)" checked> Revoir plus souvent mes erreurs</label>
+  </div>
   <div class="quiz-card">
     <div class="verb-display" id="qVerb">—</div>
     <div class="verb-translation" id="qTrans"></div>
     <div class="verb-type" id="qType"></div>
-    <div class="question-prompt">Conjuguez au <strong id="qTenseName"></strong> pour <span class="pronoun-highlight" id="qPronoun"></span></div><br>
-    <input type="text" class="answer-input" id="answerInput" placeholder="Votre réponse..." onkeydown="if(event.key==='Enter')checkAnswer()">
-    <div class="feedback-msg" id="feedbackMsg"></div>
+    <div class="question-prompt">Conjuguez <span id="qPrep">au</span> <strong id="qTenseName"></strong> pour <span class="pronoun-highlight" id="qPronoun"></span></div>
+    <label for="answerInput" class="sr-only">Votre réponse</label>
+    <input type="text" class="answer-input" id="answerInput" placeholder="Votre réponse..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="es">
+    <div class="accent-keys" id="accentKeys" aria-label="Insérer un caractère spécial"></div>
+    <div class="feedback-msg" id="feedbackMsg" aria-live="polite"></div>
     <div class="quiz-actions">
-      <button class="btn btn-primary" onclick="checkAnswer()">Vérifier</button>
-      <button class="btn btn-secondary" onclick="nextQuestion()">Suivant →</button>
-      <button class="btn btn-secondary" onclick="showHint()">💡 Indice</button>
+      <button class="btn btn-primary" type="button" id="checkBtn" onclick="checkAnswer()">Vérifier</button>
+      <button class="btn btn-secondary" type="button" onclick="nextQuestion()">Suivant →</button>
+      <button class="btn btn-secondary" type="button" onclick="showHint()">💡 Indice</button>
+      <button class="btn btn-secondary tts-only" type="button" id="quizSpeak" onclick="speakCurrent()" disabled>🔊 Écouter</button>
     </div>
+    <div class="kbd-hint"><kbd>Entrée</kbd> vérifier / question suivante</div>
   </div>
-</div>
-<div id="mode-table">
+</section>
+
+<section id="mode-table" class="mode" role="tabpanel" aria-label="Tables de conjugaison">
   <div class="controls">
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Rechercher un verbe..." id="tableSearch" oninput="filterTableVerbs()"></div>
-    <select id="tableTypeFilter" onchange="filterTableVerbs()"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
+    <div class="search-box"><span class="search-icon" aria-hidden="true">🔍</span><input type="text" placeholder="Rechercher un verbe (espagnol ou français)..." id="tableSearch" aria-label="Rechercher un verbe" oninput="filterTableVerbs()"></div>
+    <select id="tableTypeFilter" aria-label="Type de verbe" onchange="filterTableVerbs()"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
   </div>
   <div class="verb-list" id="verbList"></div>
   <div class="conj-table-wrap">
     <div class="conj-table-header"><div><h2 id="tableVerbName">Choisissez un verbe</h2><span class="ctrans" id="tableVerbTrans"></span></div></div>
     <div class="tenses-grid" id="tenseGrid"><div class="empty-state">🌿 Sélectionnez un verbe ci-dessus</div></div>
   </div>
-</div>
-<div id="mode-flash">
+</section>
+
+<section id="mode-flash" class="mode" role="tabpanel" aria-label="Flashcards">
   <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;">
-    <select id="flashTenseFilter" onchange="initFlash()"><option value="presente">Présent</option><option value="preterito">Prétérit</option><option value="imperfecto">Imparfait</option><option value="futuro">Futur</option><option value="condicional">Conditionnel</option><option value="subjuntivo">Subjonctif</option></select>
-    <select id="flashTypeFilter" onchange="initFlash()"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
+    <select id="flashTenseFilter" aria-label="Temps" onchange="initFlash()"></select>
+    <select id="flashTypeFilter" aria-label="Type de verbe" onchange="initFlash()"><option value="">Tous types</option><option value="ar">-AR</option><option value="er">-ER</option><option value="ir">-IR</option><option value="irr">Irréguliers</option></select>
   </div>
   <div class="flashcard-area">
-    <div class="flashcard" id="flashcard" onclick="flipCard()">
+    <button class="flashcard" id="flashcard" type="button" onclick="flipCard()" aria-label="Retourner la carte">
       <div class="fc-face fc-front"><div class="fc-label">Infinitif + Pronom</div><div class="fc-verb" id="fcVerb">—</div><div class="fc-sub" id="fcPronoun">—</div><div class="fc-tense-badge" id="fcTenseBadge">—</div></div>
       <div class="fc-face fc-back"><div class="fc-label">Conjugaison</div><div class="fc-verb" id="fcAnswer">—</div><div class="fc-fr" id="fcFr">—</div></div>
-    </div>
+    </button>
   </div>
-  <div class="fc-hint">🌿 Cliquez sur la carte pour révéler la réponse</div>
+  <div class="fc-hint">🌿 Cliquez sur la carte pour révéler la réponse · <kbd>Espace</kbd> retourner · <kbd>←</kbd> <kbd>→</kbd> naviguer</div>
   <div class="flash-nav">
-    <button class="btn btn-secondary" onclick="flashNav(-1)">← Précédent</button>
-    <div class="flash-counter" id="flashCounter">— / —</div>
-    <button class="btn btn-primary" onclick="flashNav(1)">Suivant →</button>
+    <button class="btn btn-secondary" type="button" onclick="flashNav(-1)">← Précédent</button>
+    <div class="flash-counter" id="flashCounter" aria-live="polite">— / —</div>
+    <button class="btn btn-primary" type="button" onclick="flashNav(1)">Suivant →</button>
   </div>
-  <br><div style="text-align:center;"><button class="btn btn-secondary" onclick="shuffleFlash()">🔀 Mélanger</button></div>
-</div>
-<footer><span>ConjugaES</span> — 80+ verbes · 6 temps · Traductions &amp; phonétique 🌿</footer>
+  <br><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <button class="btn btn-secondary" type="button" onclick="shuffleFlash()">🔀 Mélanger</button>
+    <button class="btn btn-secondary tts-only" type="button" onclick="speakFlash()">🔊 Écouter</button>
+  </div>
+</section>
+<footer><span>ConjugaES</span> — <span id="verbCount">68</span> verbes · 6 temps · Traductions françaises · Prononciation 🌿</footer>
 </div>
 <script>
 const PRONOUNS=['yo','tú','él/ella','nosotros','vosotros','ellos/ellas'];
-const TENSES={presente:{n:'Présent',fr:'Présent'},preterito:{n:'Prétérit',fr:'Prétérit'},imperfecto:{n:'Imparfait',fr:'Imparfait'},futuro:{n:'Futur',fr:'Futur'},condicional:{n:'Conditionnel',fr:'Conditionnel'},subjuntivo:{n:'Subjonctif',fr:'Subjonctif'}};
-// Each verb: v=infinitif, t=traduction, type, es=conjugaisons, ph=phonétique, fr=traductions conjuguées
-// All 6 tenses: presente, preterito, imperfecto, futuro, condicional, subjuntivo
-// Each tense: [yo, tú, él/ella, nosotros, vosotros, ellos/ellas]
+const TENSES={presente:{n:'Présent'},preterito:{n:'Prétérit (passé simple)'},imperfecto:{n:'Imparfait'},futuro:{n:'Futur'},condicional:{n:'Conditionnel'},subjuntivo:{n:'Subjonctif présent'}};
+// Chaque verbe : v=infinitif, t=traduction, type (ar|er|ir|irr), ch=changement de radical/orthographe (optionnel),
+// es=conjugaisons espagnoles, fr=traductions conjuguées.
+// Chaque temps : [yo, tú, él/ella, nosotros, vosotros, ellos/ellas]
 const VERBS=[
 {v:'hablar',t:'Parler',type:'ar',
  es:{presente:['hablo','hablas','habla','hablamos','habláis','hablan'],preterito:['hablé','hablaste','habló','hablamos','hablasteis','hablaron'],imperfecto:['hablaba','hablabas','hablaba','hablábamos','hablabais','hablaban'],futuro:['hablaré','hablarás','hablará','hablaremos','hablaréis','hablarán'],condicional:['hablaría','hablarías','hablaría','hablaríamos','hablaríais','hablarían'],subjuntivo:['hable','hables','hable','hablemos','habléis','hablen']},
@@ -268,11 +335,11 @@ const VERBS=[
  es:{presente:['gano','ganas','gana','ganamos','ganáis','ganan'],preterito:['gané','ganaste','ganó','ganamos','ganasteis','ganaron'],imperfecto:['ganaba','ganabas','ganaba','ganábamos','ganabais','ganaban'],futuro:['ganaré','ganarás','ganará','ganaremos','ganaréis','ganarán'],condicional:['ganaría','ganarías','ganaría','ganaríamos','ganaríais','ganarían'],subjuntivo:['gane','ganes','gane','ganemos','ganéis','ganen']},
 
  fr:{presente:['je gagne','tu gagnes','il gagne','nous gagnons','vous gagnez','ils gagnent'],preterito:['je gagnai','tu gagnas','il gagna','nous gagnâmes','vous gagnâtes','ils gagnèrent'],imperfecto:['je gagnais','tu gagnais','il gagnait','nous gagnions','vous gagniez','ils gagnaient'],futuro:['je gagnerai','tu gagneras','il gagnera','nous gagnerons','vous gagnerez','ils gagneront'],condicional:['je gagnerais','tu gagnerais','il gagnerait','nous gagnerions','vous gagneriez','ils gagneraient'],subjuntivo:['que je gagne','que tu gagnes','qu\'il gagne','que nous gagnions','que vous gagniez','qu\'ils gagnent']}},
-{v:'jugar',t:'Jouer',type:'ar',
+{v:'jugar',t:'Jouer',type:'ar',ch:'u→ue',
  es:{presente:['juego','juegas','juega','jugamos','jugáis','juegan'],preterito:['jugué','jugaste','jugó','jugamos','jugasteis','jugaron'],imperfecto:['jugaba','jugabas','jugaba','jugábamos','jugabais','jugaban'],futuro:['jugaré','jugarás','jugará','jugaremos','jugaréis','jugarán'],condicional:['jugaría','jugarías','jugaría','jugaríamos','jugaríais','jugarían'],subjuntivo:['juegue','juegues','juegue','juguemos','juguéis','jueguen']},
 
  fr:{presente:['je joue','tu joues','il joue','nous jouons','vous jouez','ils jouent'],preterito:['je jouai','tu jouas','il joua','nous jouâmes','vous jouâtes','ils jouèrent'],imperfecto:['je jouais','tu jouais','il jouait','nous jouions','vous jouiez','ils jouaient'],futuro:['je jouerai','tu joueras','il jouera','nous jouerons','vous jouerez','ils joueront'],condicional:['je jouerais','tu jouerais','il jouerait','nous jouerions','vous joueriez','ils joueraient'],subjuntivo:['que je joue','que tu joues','qu\'il joue','que nous jouions','que vous jouiez','qu\'ils jouent']}},
-{v:'tocar',t:'Toucher / Jouer (instrument)',type:'ar',
+{v:'tocar',t:'Toucher / Jouer (instrument)',type:'ar',ch:'c→qu',
  es:{presente:['toco','tocas','toca','tocamos','tocáis','tocan'],preterito:['toqué','tocaste','tocó','tocamos','tocasteis','tocaron'],imperfecto:['tocaba','tocabas','tocaba','tocábamos','tocabais','tocaban'],futuro:['tocaré','tocarás','tocará','tocaremos','tocaréis','tocarán'],condicional:['tocaría','tocarías','tocaría','tocaríamos','tocaríais','tocarían'],subjuntivo:['toque','toques','toque','toquemos','toquéis','toquen']},
 
  fr:{presente:['je touche','tu touches','il touche','nous touchons','vous touchez','ils touchent'],preterito:['je touchai','tu touchas','il toucha','nous touchâmes','vous touchâtes','ils touchèrent'],imperfecto:['je touchais','tu touchais','il touchait','nous touchions','vous touchiez','ils touchaient'],futuro:['je toucherai','tu toucheras','il touchera','nous toucherons','vous toucherez','ils toucheront'],condicional:['je toucherais','tu toucherais','il toucherait','nous toucherions','vous toucheriez','ils toucheraient'],subjuntivo:['que je touche','que tu touches','qu\'il touche','que nous touchions','que vous touchiez','qu\'ils touchent']}},
@@ -301,7 +368,7 @@ const VERBS=[
 
  fr:{presente:['je change','tu changes','il change','nous changeons','vous changez','ils changent'],preterito:['je changeai','tu changeas','il changea','nous changeâmes','vous changeâtes','ils changèrent'],imperfecto:['je changeais','tu changeais','il changeait','nous changions','vous changiez','ils changeaient'],futuro:['je changerai','tu changeras','il changera','nous changerons','vous changerez','ils changeront'],condicional:['je changerais','tu changerais','il changerait','nous changerions','vous changeriez','ils changeraient'],subjuntivo:['que je change','que tu changes','qu\'il change','que nous changions','que vous changiez','qu\'ils changent']}},
 {v:'cocinar',t:'Cuisiner',type:'ar',
- es:{presente:['cocino','cocinas','cocina','cocinamos','cocináis','cocinan'],preterito:['cociné','cocinaste','cocinó','cocinamos','cocinasteis','cocinaron'],imperfecto:['cocinaba','cocinabas','cocinaba','cocinábamos','cocinabais','cocinaban'],futuro:['cocinaré','cocinarás','cocinará','cocinaremos','cocinaréis','cocinarán'],condicional:['cocinaría','cocinarías','cocinaría','cocinaríamos','cocinaríais','cocinarían'],subjuntivo:['cocine','cocines','cocine','cocinemos','cocinaos','cocinen']},
+ es:{presente:['cocino','cocinas','cocina','cocinamos','cocináis','cocinan'],preterito:['cociné','cocinaste','cocinó','cocinamos','cocinasteis','cocinaron'],imperfecto:['cocinaba','cocinabas','cocinaba','cocinábamos','cocinabais','cocinaban'],futuro:['cocinaré','cocinarás','cocinará','cocinaremos','cocinaréis','cocinarán'],condicional:['cocinaría','cocinarías','cocinaría','cocinaríamos','cocinaríais','cocinarían'],subjuntivo:['cocine','cocines','cocine','cocinemos','cocinéis','cocinen']},
 
  fr:{presente:['je cuisine','tu cuisines','il cuisine','nous cuisinons','vous cuisinez','ils cuisinent'],preterito:['je cuisinai','tu cuisinas','il cuisina','nous cuisinâmes','vous cuisinâtes','ils cuisinèrent'],imperfecto:['je cuisinais','tu cuisinais','il cuisinait','nous cuisinions','vous cuisiniez','ils cuisinaient'],futuro:['je cuisinerai','tu cuisineras','il cuisinera','nous cuisinerons','vous cuisinerez','ils cuisineront'],condicional:['je cuisinerais','tu cuisinerais','il cuisinerait','nous cuisinerions','vous cuisineriez','ils cuisineraient'],subjuntivo:['que je cuisine','que tu cuisines','qu\'il cuisine','que nous cuisinions','que vous cuisiniez','qu\'ils cuisinent']}},
 {v:'comer',t:'Manger',type:'er',
@@ -316,7 +383,7 @@ const VERBS=[
  es:{presente:['corro','corres','corre','corremos','corréis','corren'],preterito:['corrí','corriste','corrió','corrimos','corristeis','corrieron'],imperfecto:['corría','corrías','corría','corríamos','corríais','corrían'],futuro:['correré','correrás','correrá','correremos','correréis','correrán'],condicional:['correría','correrías','correría','correríamos','correríais','correrían'],subjuntivo:['corra','corras','corra','corramos','corráis','corran']},
 
  fr:{presente:['je cours','tu cours','il court','nous courons','vous courez','ils courent'],preterito:['je courus','tu courus','il courut','nous courûmes','vous courûtes','ils coururent'],imperfecto:['je courais','tu courais','il courait','nous courions','vous couriez','ils couraient'],futuro:['je courrai','tu courras','il courra','nous courrons','vous courrez','ils courront'],condicional:['je courrais','tu courrais','il courrait','nous courrions','vous courriez','ils courraient'],subjuntivo:['que je coure','que tu coures','qu\'il coure','que nous courions','que vous couriez','qu\'ils courent']}},
-{v:'leer',t:'Lire',type:'er',
+{v:'leer',t:'Lire',type:'er',ch:'i→y',
  es:{presente:['leo','lees','lee','leemos','leéis','leen'],preterito:['leí','leíste','leyó','leímos','leísteis','leyeron'],imperfecto:['leía','leías','leía','leíamos','leíais','leían'],futuro:['leeré','leerás','leerá','leeremos','leeréis','leerán'],condicional:['leería','leerías','leería','leeríamos','leeríais','leerían'],subjuntivo:['lea','leas','lea','leamos','leáis','lean']},
 
  fr:{presente:['je lis','tu lis','il lit','nous lisons','vous lisez','ils lisent'],preterito:['je lus','tu lus','il lut','nous lûmes','vous lûtes','ils lurent'],imperfecto:['je lisais','tu lisais','il lisait','nous lisions','vous lisiez','ils lisaient'],futuro:['je lirai','tu liras','il lira','nous lirons','vous lirez','ils liront'],condicional:['je lirais','tu lirais','il lirait','nous lirions','vous liriez','ils liraient'],subjuntivo:['que je lise','que tu lises','qu\'il lise','que nous lisions','que vous lisiez','qu\'ils lisent']}},
@@ -360,15 +427,15 @@ const VERBS=[
  es:{presente:['abro','abres','abre','abrimos','abrís','abren'],preterito:['abrí','abriste','abrió','abrimos','abristeis','abrieron'],imperfecto:['abría','abrías','abría','abríamos','abríais','abrían'],futuro:['abriré','abrirás','abrirá','abriremos','abriréis','abrirán'],condicional:['abriría','abrirías','abriría','abriríamos','abriríais','abrirían'],subjuntivo:['abra','abras','abra','abramos','abráis','abran']},
 
  fr:{presente:['j\'ouvre','tu ouvres','il ouvre','nous ouvrons','vous ouvrez','ils ouvrent'],preterito:['j\'ouvris','tu ouvris','il ouvrit','nous ouvrîmes','vous ouvrîtes','ils ouvrirent'],imperfecto:['j\'ouvrais','tu ouvrais','il ouvrait','nous ouvrions','vous ouvriez','ils ouvraient'],futuro:['j\'ouvrirai','tu ouvriras','il ouvrira','nous ouvrirons','vous ouvrirez','ils ouvriront'],condicional:['j\'ouvrirais','tu ouvrirais','il ouvrirait','nous ouvririons','vous ouvririez','ils ouvriraient'],subjuntivo:['que j\'ouvre','que tu ouvres','qu\'il ouvre','que nous ouvrions','que vous ouvriez','qu\'ils ouvrent']}},
-{v:'dormir',t:'Dormir',type:'ir',
+{v:'dormir',t:'Dormir',type:'ir',ch:'o→ue',
  es:{presente:['duermo','duermes','duerme','dormimos','dormís','duermen'],preterito:['dormí','dormiste','durmió','dormimos','dormisteis','durmieron'],imperfecto:['dormía','dormías','dormía','dormíamos','dormíais','dormían'],futuro:['dormiré','dormirás','dormirá','dormiremos','dormiréis','dormirán'],condicional:['dormiría','dormirías','dormiría','dormiríamos','dormiríais','dormirían'],subjuntivo:['duerma','duermas','duerma','durmamos','durmáis','duerman']},
 
  fr:{presente:['je dors','tu dors','il dort','nous dormons','vous dormez','ils dorment'],preterito:['je dormis','tu dormis','il dormit','nous dormîmes','vous dormîtes','ils dormirent'],imperfecto:['je dormais','tu dormais','il dormait','nous dormions','vous dormiez','ils dormaient'],futuro:['je dormirai','tu dormiras','il dormira','nous dormirons','vous dormirez','ils dormiront'],condicional:['je dormirais','tu dormirais','il dormirait','nous dormirions','vous dormiriez','ils dormiraient'],subjuntivo:['que je dorme','que tu dormes','qu\'il dorme','que nous dormions','que vous dormiez','qu\'ils dorment']}},
-{v:'sentir',t:'Ressentir / Sentir',type:'ir',
+{v:'sentir',t:'Ressentir / Sentir',type:'ir',ch:'e→ie',
  es:{presente:['siento','sientes','siente','sentimos','sentís','sienten'],preterito:['sentí','sentiste','sintió','sentimos','sentisteis','sintieron'],imperfecto:['sentía','sentías','sentía','sentíamos','sentíais','sentían'],futuro:['sentiré','sentirás','sentirá','sentiremos','sentiréis','sentirán'],condicional:['sentiría','sentirías','sentiría','sentiríamos','sentiríais','sentirían'],subjuntivo:['sienta','sientas','sienta','sintamos','sintáis','sientan']},
 
  fr:{presente:['je ressens','tu ressens','il ressent','nous ressentons','vous ressentez','ils ressentent'],preterito:['je ressentis','tu ressentis','il ressentit','nous ressentîmes','vous ressentîtes','ils ressentirent'],imperfecto:['je ressentais','tu ressentais','il ressentait','nous ressentions','vous ressentiez','ils ressentaient'],futuro:['je ressentirai','tu ressentiras','il ressentira','nous ressentirons','vous ressentirez','ils ressentiront'],condicional:['je ressentirais','tu ressentirais','il ressentirait','nous ressentirions','vous ressentiriez','ils ressentiraient'],subjuntivo:['que je ressente','que tu ressentes','qu\'il ressente','que nous ressentions','que vous ressentiez','qu\'ils ressentent']}},
-{v:'pedir',t:'Demander',type:'ir',
+{v:'pedir',t:'Demander',type:'ir',ch:'e→i',
  es:{presente:['pido','pides','pide','pedimos','pedís','piden'],preterito:['pedí','pediste','pidió','pedimos','pedisteis','pidieron'],imperfecto:['pedía','pedías','pedía','pedíamos','pedíais','pedían'],futuro:['pediré','pedirás','pedirá','pediremos','pediréis','pedirán'],condicional:['pediría','pedirías','pediría','pediríamos','pediríais','pedirían'],subjuntivo:['pida','pidas','pida','pidamos','pidáis','pidan']},
 
  fr:{presente:['je demande','tu demandes','il demande','nous demandons','vous demandez','ils demandent'],preterito:['je demandai','tu demandas','il demanda','nous demandâmes','vous demandâtes','ils demandèrent'],imperfecto:['je demandais','tu demandais','il demandait','nous demandions','vous demandiez','ils demandaient'],futuro:['je demanderai','tu demanderas','il demandera','nous demanderons','vous demanderez','ils demanderont'],condicional:['je demanderais','tu demanderais','il demanderait','nous demanderions','vous demanderiez','ils demanderaient'],subjuntivo:['que je demande','que tu demandes','qu\'il demande','que nous demandions','que vous demandiez','qu\'ils demandent']}},
@@ -477,106 +544,249 @@ const VERBS=[
 
  fr:{presente:['je tombe','tu tombes','il tombe','nous tombons','vous tombez','ils tombent'],preterito:['je tombai','tu tombas','il tomba','nous tombâmes','vous tombâtes','ils tombèrent'],imperfecto:['je tombais','tu tombais','il tombait','nous tombions','vous tombiez','ils tombaient'],futuro:['je tomberai','tu tomberas','il tombera','nous tomberons','vous tomberez','ils tomberont'],condicional:['je tomberais','tu tomberais','il tomberait','nous tomberions','vous tomberiez','ils tomberaient'],subjuntivo:['que je tombe','que tu tombes','qu\'il tombe','que nous tombions','que vous tombiez','qu\'ils tombent']}},
 ];
-let score={correct:0,wrong:0,total:0},currentVerb,currentTense,currentPronounIdx,answered=false,selectedTense='presente',flashCards=[],flashIdx=0,tableVerbs=[...VERBS];
 
-function init(){buildTenseSelector();nextQuestion();buildVerbList();initFlash();}
-function buildTenseSelector(){document.getElementById('tenseSelector').innerHTML=Object.entries(TENSES).map(([k,v])=>`<button class="tense-btn${k===selectedTense?' active':''}" onclick="setTense('${k}')">${v.n}</button>`).join('');}
-function setTense(t){selectedTense=t;buildTenseSelector();nextQuestion();}
-function nextQuestion(){
-  answered=false;
-  const inp=document.getElementById('answerInput');
-  inp.value='';inp.className='answer-input';
-  document.getElementById('feedbackMsg').textContent='';
-  document.getElementById('feedbackMsg').className='feedback-msg';
-  currentVerb=VERBS[Math.floor(Math.random()*VERBS.length)];
-  currentTense=selectedTense;
-  currentPronounIdx=Math.floor(Math.random()*6);
-  document.getElementById('qVerb').textContent=currentVerb.v;
-  document.getElementById('qTrans').textContent='('+currentVerb.t+')';
-  const tl={ar:'-AR',er:'-ER',ir:'-IR',irr:'Irrégulier'};
-  document.getElementById('qType').textContent=tl[currentVerb.type];
-  document.getElementById('qTenseName').textContent=TENSES[currentTense].n;
-  document.getElementById('qPronoun').textContent=PRONOUNS[currentPronounIdx];
-  inp.focus();
+// ---------- État & persistance ----------
+const STORE_KEY='conjugaes:v1';
+const TYPE_LABEL={ar:'-AR',er:'-ER',ir:'-IR',irr:'Irrégulier'};
+const TYPE_SHORT={ar:'-AR',er:'-ER',ir:'-IR',irr:'IRR'};
+const PREP={imperfecto:"à l'"};
+const ACCENTS=['á','é','í','ó','ú','ñ','ü'];
+const PRONOUN_PREFIX=/^(yo|tu|tú|el|él|ella|usted|nosotros|nosotras|vosotros|vosotras|ellos|ellas|ustedes)\s+/;
+const $=id=>document.getElementById(id);
+
+const state={
+  score:{correct:0,wrong:0,total:0,streak:0,best:0},
+  mistakes:{},             // "verbe|temps|personne" -> nombre d'erreurs
+  tenses:['presente'],
+  quizType:'',
+  vosotros:true,
+  review:true,
+  theme:null,
+  tab:'quiz'
+};
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(STORE_KEY));if(s)Object.assign(state,s,{score:Object.assign(state.score,s.score)});}catch(e){}
+  state.tenses=(state.tenses||[]).filter(t=>TENSES[t]);
+  if(!state.tenses.length)state.tenses=['presente'];
 }
-function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}catch(e){}}
+
+let current=null,answered=false,hintLevel=0,lastVerb=null,flashCards=[],flashIdx=0,tableVerbs=[...VERBS],selectedTableVerb=null;
+
+function persons(){return state.vosotros?[0,1,2,3,4,5]:[0,1,2,3,5];}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function verbTypeLabel(v,short){const l=(short?TYPE_SHORT:TYPE_LABEL)[v.type];return v.ch?`${l} · ${v.ch}`:l;}
+
+// ---------- Prononciation (synthèse vocale du navigateur) ----------
+const TTS='speechSynthesis' in window;
+let esVoice=null;
+function loadVoices(){if(!TTS)return;const vs=speechSynthesis.getVoices();esVoice=vs.find(v=>v.lang==='es-ES')||vs.find(v=>v.lang&&v.lang.startsWith('es'))||null;}
+function speak(text){
+  if(!TTS||!text)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=.9;if(esVoice)u.voice=esVoice;
+  speechSynthesis.speak(u);
+}
+
+// ---------- Quiz ----------
+function buildTenseSelector(){
+  $('tenseSelector').innerHTML=Object.entries(TENSES).map(([k,v])=>{
+    const on=state.tenses.includes(k);
+    return `<button type="button" class="tense-btn${on?' active':''}" aria-pressed="${on}" onclick="toggleTense('${k}')">${v.n}</button>`;
+  }).join('');
+}
+function toggleTense(t){
+  const i=state.tenses.indexOf(t);
+  if(i>=0){if(state.tenses.length===1)return;state.tenses.splice(i,1);}else state.tenses.push(t);
+  save();buildTenseSelector();nextQuestion();
+}
+function setQuizType(t){state.quizType=t;save();nextQuestion();}
+function setReview(b){state.review=b;save();}
+function quizVerbs(){return VERBS.filter(v=>!state.quizType||v.type===state.quizType);}
+
+function pickQuestion(){
+  const verbs=quizVerbs(),ps=persons();
+  if(state.review&&Math.random()<.35){
+    const pool=Object.keys(state.mistakes).map(k=>{const [v,t,i]=k.split('|');return{verb:VERBS.find(x=>x.v===v),tense:t,idx:+i};})
+      .filter(q=>q.verb&&verbs.includes(q.verb)&&state.tenses.includes(q.tense)&&ps.includes(q.idx)&&q.verb!==lastVerb);
+    if(pool.length)return pick(pool);
+  }
+  let verb=pick(verbs);
+  if(verbs.length>1)while(verb===lastVerb)verb=pick(verbs);
+  return{verb,tense:pick(state.tenses),idx:pick(ps)};
+}
+function nextQuestion(){
+  answered=false;hintLevel=0;
+  const inp=$('answerInput');
+  inp.value='';inp.className='answer-input';
+  setFeedback('','');
+  $('checkBtn').textContent='Vérifier';
+  current=pickQuestion();lastVerb=current.verb;
+  $('qVerb').textContent=current.verb.v;
+  $('qTrans').textContent='('+current.verb.t+')';
+  $('qType').textContent=verbTypeLabel(current.verb);
+  $('qPrep').textContent=PREP[current.tense]||'au';
+  $('qTenseName').textContent=TENSES[current.tense].n;
+  $('qPronoun').textContent=PRONOUNS[current.idx];
+  inp.focus({preventScroll:true});
+}
+function setFeedback(cls,html){const f=$('feedbackMsg');f.className='feedback-msg'+(cls?' '+cls:'');f.innerHTML=html;}
+function strip(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function clean(s){return s.trim().toLowerCase().replace(/\s+/g,' ').replace(PRONOUN_PREFIX,'');}
+function mistakeKey(q){return `${q.verb.v}|${q.tense}|${q.idx}`;}
+
 function checkAnswer(){
   if(answered){nextQuestion();return;}
-  const inp=document.getElementById('answerInput');
-  const ua=norm(inp.value);
-  const correct=currentVerb.es[currentTense][currentPronounIdx];
-  answered=true;score.total++;
-  if(ua===norm(correct)){
-    score.correct++;inp.className='answer-input correct';
-    document.getElementById('feedbackMsg').textContent='✓ Bravo !';
-    document.getElementById('feedbackMsg').className='feedback-msg correct';
-  } else {
-    score.wrong++;inp.className='answer-input wrong';
-    document.getElementById('feedbackMsg').textContent='✗ Réponse : '+correct+' ('+currentVerb.es[currentTense][currentPronounIdx]+')';
-    document.getElementById('feedbackMsg').className='feedback-msg wrong';
+  const inp=$('answerInput');
+  const ua=clean(inp.value);
+  if(!ua){inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.focus();return;}
+  const correct=current.verb.es[current.tense][current.idx];
+  const fr=`<span class="feedback-fr">${current.verb.fr[current.tense][current.idx]}</span>`;
+  const key=mistakeKey(current),s=state.score;
+  answered=true;s.total++;
+  if(ua===correct||strip(ua)===strip(correct)){
+    s.correct++;
+    if(hintLevel===0){s.streak++;s.best=Math.max(s.best,s.streak);}
+    if(state.mistakes[key]){if(--state.mistakes[key]<=0)delete state.mistakes[key];}
+    const withHint=hintLevel?' <small>(avec indice)</small>':'';
+    if(ua===correct){inp.className='answer-input correct';setFeedback('correct','✓ ¡Muy bien !'+withHint+fr);}
+    else{inp.className='answer-input almost';setFeedback('almost',`✓ Presque ! Attention aux accents : <strong>${correct}</strong>`+withHint+fr);}
+  }else{
+    s.wrong++;s.streak=0;
+    state.mistakes[key]=(state.mistakes[key]||0)+1;
+    inp.className='answer-input wrong';
+    setFeedback('wrong',`✗ Réponse : <strong>${correct}</strong>`+fr);
   }
-  updateScore();
+  $('checkBtn').textContent='Question suivante →';
+  updateScore();save();
 }
-function showHint(){const c=currentVerb.es[currentTense][currentPronounIdx];document.getElementById('feedbackMsg').textContent='Indice : '+c.substring(0,3)+'...';}
+function showHint(){
+  if(answered)return;
+  const c=current.verb.es[current.tense][current.idx];
+  hintLevel=Math.min(hintLevel+1,Math.max(1,c.length-1)); // ne révèle jamais la réponse entière
+  const shown=[...c].map((ch,i)=>i<hintLevel?ch:'_').join(' ');
+  setFeedback('hint','💡 '+shown);
+  $('answerInput').focus();
+}
+function speakCurrent(){
+  if(!current)return;
+  speak(answered?current.verb.es[current.tense][current.idx]:current.verb.v);
+}
+function buildAccentKeys(){
+  $('accentKeys').innerHTML=ACCENTS.map(a=>`<button type="button" class="accent-key" onmousedown="event.preventDefault()" onclick="insertChar('${a}')">${a}</button>`).join('');
+}
+function insertChar(ch){
+  const inp=$('answerInput');if(answered)return;
+  const a=inp.selectionStart??inp.value.length,b=inp.selectionEnd??a;
+  inp.value=inp.value.slice(0,a)+ch+inp.value.slice(b);
+  inp.focus();inp.setSelectionRange(a+1,a+1);
+}
 function updateScore(){
-  document.getElementById('scoreCorrect').textContent=score.correct;
-  document.getElementById('scoreWrong').textContent=score.wrong;
-  document.getElementById('scoreTotal').textContent=score.total;
-  const p=score.total>0?Math.round(score.correct/score.total*100):0;
-  document.getElementById('progressFill').style.width=p+'%';
+  const s=state.score;
+  $('scoreCorrect').textContent=s.correct;
+  $('scoreWrong').textContent=s.wrong;
+  $('scoreTotal').textContent=s.total;
+  $('scoreStreak').textContent=s.streak;
+  $('scoreBest').textContent=s.best;
+  const p=s.total>0?Math.round(s.correct/s.total*100):0;
+  $('progressFill').style.width=p+'%';
+  $('progressBar').setAttribute('aria-valuenow',p);
 }
-function resetScore(){score={correct:0,wrong:0,total:0};updateScore();}
+function resetScore(){
+  if(state.score.total&&!confirm('Réinitialiser le score, le record et la liste des erreurs à revoir ?'))return;
+  state.score={correct:0,wrong:0,total:0,streak:0,best:0};state.mistakes={};
+  updateScore();save();
+}
+
+// ---------- Tables ----------
 function buildVerbList(){
-  const bc={ar:'badge-ar',er:'badge-er',ir:'badge-ir',irr:'badge-irr'};
-  const tl={ar:'-AR',er:'-ER',ir:'-IR',irr:'IRR'};
-  document.getElementById('verbList').innerHTML=tableVerbs.map(v=>`<div class="verb-item" onclick="showTable('${v.v}')"><div class="vi-name">${v.v}</div><div class="vi-trans">${v.t}</div><span class="badge ${bc[v.type]}">${tl[v.type]}</span></div>`).join('');
+  $('verbList').innerHTML=tableVerbs.length?tableVerbs.map(v=>`<button type="button" class="verb-item${v===selectedTableVerb?' selected':''}" onclick="showTable('${v.v}')"><div class="vi-name">${v.v}</div><div class="vi-trans">${v.t}</div><span class="badge badge-${v.type}">${TYPE_SHORT[v.type]}</span>${v.ch?`<span class="badge badge-ch" title="Changement de radical ou d'orthographe">${v.ch}</span>`:''}</button>`).join('')
+    :'<div class="empty-state">Aucun verbe trouvé</div>';
 }
 function filterTableVerbs(){
-  const s=document.getElementById('tableSearch').value.toLowerCase();
-  const t=document.getElementById('tableTypeFilter').value;
-  tableVerbs=VERBS.filter(v=>(v.v.includes(s)||v.t.toLowerCase().includes(s))&&(!t||v.type===t));
+  const s=strip($('tableSearch').value.trim().toLowerCase());
+  const t=$('tableTypeFilter').value;
+  tableVerbs=VERBS.filter(v=>(strip(v.v).includes(s)||strip(v.t.toLowerCase()).includes(s))&&(!t||v.type===t));
   buildVerbList();
 }
 function showTable(vn){
   const verb=VERBS.find(v=>v.v===vn);if(!verb)return;
-  document.getElementById('tableVerbName').textContent=verb.v;
-  document.getElementById('tableVerbTrans').textContent=verb.t;
-  document.getElementById('tenseGrid').innerHTML=Object.entries(TENSES).map(([key,info])=>`
+  selectedTableVerb=verb;buildVerbList();
+  $('tableVerbName').innerHTML=`${verb.v} <button type="button" class="speak-btn" aria-label="Écouter ${verb.v}" onclick="speak('${verb.v}')">🔊</button>`;
+  $('tableVerbTrans').textContent=verb.t+(verb.ch?` — ${TYPE_LABEL[verb.type]}, changement ${verb.ch}`:` — ${TYPE_LABEL[verb.type]}`);
+  $('tenseGrid').innerHTML=Object.entries(TENSES).map(([key,info])=>`
     <div class="tense-block">
-      <div class="tense-title">${info.fr}</div>
-      ${PRONOUNS.map((p,i)=>`
+      <div class="tense-title">${info.n}</div>
+      ${persons().map(i=>`
         <div class="conj-row">
-          <span class="conj-pronoun">${p}</span>
-          <span class="conj-form">${verb.es[key][i]}</span>
+          <span class="conj-pronoun">${PRONOUNS[i]}</span>
+          <span class="conj-form" lang="es">${verb.es[key][i]}</span>
           <span class="conj-fr">${verb.fr[key][i]}</span>
-        </div>
-      `).join('')}
+          <button type="button" class="speak-btn" aria-label="Écouter ${verb.es[key][i]}" onclick="speak('${verb.es[key][i]}')">🔊</button>
+        </div>`).join('')}
     </div>`).join('');
 }
+
+// ---------- Flashcards ----------
+function buildFlashTenses(){$('flashTenseFilter').innerHTML=Object.entries(TENSES).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('');}
 function initFlash(){
-  const tense=document.getElementById('flashTenseFilter').value;
-  const type=document.getElementById('flashTypeFilter').value;
-  const verbs=VERBS.filter(v=>!type||v.type===type);
+  const tense=$('flashTenseFilter').value;
+  const type=$('flashTypeFilter').value;
   flashCards=[];
-  verbs.forEach(v=>PRONOUNS.forEach((p,i)=>flashCards.push({verb:v,pronoun:p,tense,idx:i})));
+  VERBS.filter(v=>!type||v.type===type).forEach(v=>persons().forEach(i=>flashCards.push({verb:v,tense,idx:i})));
   flashIdx=0;showFlashCard();
 }
 function showFlashCard(){
   const c=flashCards[flashIdx];if(!c)return;
-  document.getElementById('flashcard').classList.remove('flipped');
-  document.getElementById('fcVerb').textContent=c.verb.v;
-  document.getElementById('fcPronoun').textContent=c.pronoun;
-  document.getElementById('fcTenseBadge').textContent=TENSES[c.tense].n;
-  document.getElementById('fcAnswer').textContent=c.verb.es[c.tense][c.idx];
-  document.getElementById('fcFr').textContent=c.verb.fr[c.tense][c.idx];
-  document.getElementById('flashCounter').textContent=(flashIdx+1)+' / '+flashCards.length;
+  $('flashcard').classList.remove('flipped');
+  $('fcVerb').textContent=c.verb.v;
+  $('fcPronoun').textContent=PRONOUNS[c.idx];
+  $('fcTenseBadge').textContent=TENSES[c.tense].n;
+  // Le dos est mis à jour après la rotation pour ne pas dévoiler la réponse suivante pendant l'animation
+  setTimeout(()=>{if(flashCards[flashIdx]!==c)return;$('fcAnswer').textContent=c.verb.es[c.tense][c.idx];$('fcFr').textContent=c.verb.fr[c.tense][c.idx];},250);
+  $('flashCounter').textContent=(flashIdx+1)+' / '+flashCards.length;
 }
-function flipCard(){document.getElementById('flashcard').classList.toggle('flipped');}
-function flashNav(d){flashIdx=(flashIdx+d+flashCards.length)%flashCards.length;showFlashCard();}
+function flipCard(){$('flashcard').classList.toggle('flipped');}
+function flashNav(d){if(!flashCards.length)return;flashIdx=(flashIdx+d+flashCards.length)%flashCards.length;showFlashCard();}
 function shuffleFlash(){for(let i=flashCards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[flashCards[i],flashCards[j]]=[flashCards[j],flashCards[i]];}flashIdx=0;showFlashCard();}
+function speakFlash(){const c=flashCards[flashIdx];if(!c)return;speak($('flashcard').classList.contains('flipped')?c.verb.es[c.tense][c.idx]:c.verb.v);}
+
+// ---------- Général ----------
+function setVosotros(b){
+  state.vosotros=b;save();
+  nextQuestion();initFlash();if(selectedTableVerb)showTable(selectedTableVerb.v);
+}
 function switchTab(tab){
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['quiz','table','flash'][i]===tab));
-  ['quiz','table','flash'].forEach(m=>document.getElementById('mode-'+m).classList.toggle('active',m===tab));
+  state.tab=tab;save();
+  document.querySelectorAll('.tab').forEach(el=>{const on=el.dataset.tab===tab;el.classList.toggle('active',on);el.setAttribute('aria-selected',on);});
+  ['quiz','table','flash'].forEach(m=>$('mode-'+m).classList.toggle('active',m===tab));
+  if(tab==='quiz')$('answerInput').focus({preventScroll:true});
+}
+function applyTheme(){if(state.theme)document.documentElement.setAttribute('data-theme',state.theme);else document.documentElement.removeAttribute('data-theme');}
+function toggleTheme(){
+  const dark=state.theme?state.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  state.theme=dark?'light':'dark';applyTheme();save();
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='answerInput'&&e.key==='Enter'){e.preventDefault();checkAnswer();return;}
+  if(state.tab==='quiz'&&answered&&e.key==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();nextQuestion();return;}
+  if(state.tab!=='flash'||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==='ArrowRight'){e.preventDefault();flashNav(1);}
+  else if(e.key==='ArrowLeft'){e.preventDefault();flashNav(-1);}
+  else if(e.key===' '&&e.target.id!=='flashcard'){e.preventDefault();flipCard();}
+  else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();flipCard();}
+});
+
+function init(){
+  load();applyTheme();
+  if(!TTS)document.body.classList.add('no-tts');else{loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+  $('quizSpeak').disabled=false;
+  $('optVosotros').checked=state.vosotros;
+  $('optReview').checked=state.review;
+  $('quizTypeFilter').value=state.quizType;
+  $('verbCount').textContent=VERBS.length;
+  buildTenseSelector();buildAccentKeys();buildFlashTenses();buildVerbList();
+  updateScore();nextQuestion();initFlash();switchTab(state.tab);
 }
 init();
 </script>
